@@ -1,14 +1,42 @@
 require "bundler"
 Bundler.require
 
-require 'json'
+class Maker
+  def initialize(start_date, end_date)
+    @start_date = start_date
+    @end_date = end_date
+  end
 
-class WeeklyVisits
-  attr_accessor :content
-  def initialize(filename = "weekly_visits.json")
-    File.open(filename, 'r') do |handle|
-      payload = JSON.parse(handle.gets)['payload']
-      @content = payload['content']
+  def make(&code)
+    (@start_date..@end_date).step(7).each_with_index.map do |date, i|
+      {:date => date, :value => code.call(i, date)}
     end
   end
+end
+
+start_date = Date.today.prev_month(6)
+end_date   = Date.today
+@@maker = Maker.new(start_date, end_date)
+
+class WeeklyVisits
+  def govuk
+    @@maker.make { 500 + (rand * 1000).to_i }
+  end
+
+  def directgov
+    @@maker.make { 2000000 + (rand * 2000000).to_i }
+  end
+
+  def businesslink
+    @@maker.make { 100000 + (rand * 300000).to_i }
+  end
+
+  def highlight_spikes
+    true
+  end
+
+  def highlight_troughs
+    true
+  end
+
 end
