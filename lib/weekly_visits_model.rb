@@ -10,19 +10,19 @@ class WeeklyVisits
   property :site, String
 
   def self.last_six_months_data(site)
-    past_six_months = Date.today >> 6
-    WeeklyVisits.find(:week_starting.gte => past_six_months, :site => site)
+    past_six_months = Date.today << 6
+    WeeklyVisits.all(:week_starting.gte => past_six_months, :site => site)
   end
 
   def self.govuk
     last_six_months_data("govuk")
   end
 
-  def directgov
+  def self.directgov
     last_six_months_data("directgov")
   end
 
-  def businesslink
+  def self.businesslink
     last_six_months_data("businesslink")
   end
 

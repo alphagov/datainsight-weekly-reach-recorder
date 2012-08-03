@@ -1,10 +1,6 @@
-require 'bundler/setup'
-Bundler.require
-
-require_relative "../lib/datamodel"
-require_relative "../lib/recorders/weekly_visits_recorder"
-require_relative "../lib/weekly_visits_model"
-DataMapperConfig.configure_test
+require_relative "../test_helper"
+require_relative "../../lib/recorders/weekly_visits_recorder"
+require_relative "../../lib/weekly_visits_model"
 
 describe "WeeklyVisitsRecorder" do
 
