@@ -19,6 +19,13 @@ end_date   = Date.today
 @@maker = Maker.new(start_date, end_date)
 
 class WeeklyVisits
+  include DataMapper::Resource
+  property :id, Serial
+  property :value, Integer
+  property :week_starting, Date
+  property :collected_at, DateTime
+  property :site, String
+
   def govuk
     @@maker.make { 500 + (rand * 1000).to_i }
   end
