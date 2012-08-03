@@ -4,7 +4,7 @@ Bundler.require
 require 'sinatra'
 require 'json'
 
-require_relative 'weekly_visits'
+require_relative 'weekly_visits_model'
 
 get '/weekly_visits' do
   content_type :json

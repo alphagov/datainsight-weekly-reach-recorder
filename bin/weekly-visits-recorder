@@ -4,7 +4,7 @@ require 'rubygems'
 require 'gli'
 require 'logger'
 
-require_relative '../lib/recorders/weekly_visits'
+require_relative '../lib/recorders/weekly_visits_recorder'
 
 include GLI
 
