@@ -54,4 +54,12 @@ describe "WeeklyVisitsRecorder" do
     WeeklyVisits.govuk.map(&:value).reduce(&:+).should == 200
   end
 
+  it "should calculate the mean and median correctly" do
+    even_data = [1,2,3,4,5,6,7,8]
+    odd_data = [1,2,3,4,5,6,7,8,9]
+
+    WeeklyVisits.median(even_data).should == 4.5
+    WeeklyVisits.median(odd_data).should == 5
+  end
+
 end

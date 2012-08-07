@@ -26,12 +26,27 @@ class WeeklyVisits
     last_six_months_data("businesslink")
   end
 
-  def highlight_spikes
-    true
+  def self.median(data)
+    return 0 if data.empty?
+    mid, remainder = data.length.divmod(2)
+    if remainder == 0
+      data.sort[mid-1,2].inject(:+) / 2.0
+    else
+      data.sort[mid]
+    end
   end
 
-  def highlight_troughs
-    true
+  HIGHLIGHT_SPIKES_THRESHOLD = 0.15
+
+  def self.highlight_spikes
+    data = govuk.map { |each| each["value"] }
+    (data.max - self.median(data)).abs / self.median(data).to_f > (HIGHLIGHT_SPIKES_THRESHOLD)
+  end
+
+  def self.highlight_troughs
+    data = govuk.map { |each| each["value"] }
+    highlight_troughs_threshold = 1 - 1 / (1 + HIGHLIGHT_SPIKES_THRESHOLD)
+    (data.min - self.median(data)).abs / self.median(data).to_f > highlight_troughs_threshold
   end
 
 end

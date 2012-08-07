@@ -6,17 +6,20 @@ require 'json'
 
 require_relative 'weekly_visits_model'
 
-get '/weekly_visits' do
+
+
+get '/weekly-visits' do
   content_type :json
 
   weekly_visits = WeeklyVisits.new
 
   response = {}
-  response[:govuk] = weekly_visits.govuk
-  response[:directgov] = weekly_visits.directgov
-  response[:businesslink] = weekly_visits.businesslink
+  response[:govuk] = WeeklyVisits.govuk
+  response[:directgov] = WeeklyVisits.directgov
+  response[:businesslink] = WeeklyVisits.businesslink
 
-  response[:highlight_spikes] = weekly_visits.highlight_spikes
-  response[:highlight_troughs] = weekly_visits.highlight_troughs
+  response[:highlight_spikes] = WeeklyVisits.highlight_spikes
+  response[:highlight_troughs] = WeeklyVisits.highlight_troughs
   response.to_json
 end
+
