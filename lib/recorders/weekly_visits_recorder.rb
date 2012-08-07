@@ -21,10 +21,13 @@ module Recorders
 
     def run
       @analytics_queue.subscribe do |msg|
-
+        @logger.debug("Received a message #{msg}")
+        process_analytics_message(JSON.parse(msg[:payload]))
       end
+
       @drive_queue.subscribe do |msg|
-        process_drive_message(msg)
+        @logger.debug("Received a message #{msg}")
+        process_drive_message(JSON.parse(msg[:payload]))
       end
     end
 
