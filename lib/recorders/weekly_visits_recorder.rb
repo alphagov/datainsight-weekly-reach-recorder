@@ -13,10 +13,12 @@ module Recorders
       @analytics_queue = client.queue(ENV['QUEUE'] || 'weekly_visits_analytics')
       @drive_queue = client.queue(ENV['QUEUE'] || 'weekly_visits_drive')
       exchange = client.exchange('datainsight', :type => :topic)
-      @analytics_queue.bind(exchange, :key => 'google_analytics.visits')
-      @drive_queue.bind(exchange, :key => 'google_drive.visits')
-      @logger.info("Bound to google_analytics.visits, listening for events")
-      @logger.info("Bound to google_drive.visits, listening for events")
+
+      @analytics_queue.bind(exchange, :key => 'google_analytics.visits.hourly')
+      @logger.info("Bound to google_analytics.visits.hourly, listening for events")
+
+      @drive_queue.bind(exchange, :key => 'google_drive.visits.weekly')
+      @logger.info("Bound to google_drive.visits.weekly, listening for events")
     end
 
     def run

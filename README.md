@@ -15,7 +15,7 @@ QUEUE environment variable.
 
 ## Format
 
-The expected format from the collector is:
+The expected format from the Google Drive collector is:
 
     {
       "envelope":{
@@ -23,10 +23,27 @@ The expected format from the collector is:
         "collector":"weekly_visits"
        },
        "payload":{
-          "content":"Some content of interest went up 20%",
-          "author":"Gareth Rushgrove"
+           :value => 0,
+           :week_starting => "2012-08-06",
+           :site => "govuk"
        }
     }
+
+The expected format from the Google Analytics collector is:
+
+    {
+      "envelope":{
+        "collected_at":"2012-07-31T10:46:25+01:00",
+        "collector":"weekly_visits"
+       },
+       "payload":{
+           :value => 0,
+           :start_at => DateTime.parse("03/08/2012 11:00:00"),
+           :end_at => DateTime.parse("03/08/2012 12:00:00"),
+           :site => "govuk"
+       }
+    }
+
 
 ## Dependencies
 
@@ -60,4 +77,19 @@ exposes that information can be started.
 This starts a web application which exposes one URL at /weekly_visits which
 returns a JSON document of the following format:
 
-    {"content":"Content goes here"}
+    {"govuk":[
+        {
+            "date":"2012-08-06",
+            "value":0
+        }
+    ], "directgov":[
+        {
+            "date":"2012-08-06",
+            "value":0
+        }
+    ], "businesslink":[
+        {
+            "date":"2012-08-06",
+            "value":0
+        }
+    ], "highlight_spikes":false, "highlight_troughs":false}
