@@ -5,19 +5,30 @@ require 'gli'
 require 'logger'
 
 require_relative '../lib/recorders/weekly_visits_recorder'
+require_relative '../lib/datamapper_config'
 
 include GLI
 
-program_desc 'Stuff'
+program_desc 'Recorder for "Weekly Visits"'
 
 version 0.1
 
 logger = Logger.new(STDOUT)
-logger.level = Logger::INFO
+logger.level = Logger::DEBUG
 
-desc 'More stuff'
+desc %q(start the recorder process to consume 'visits' messages from the MQ)
+
 command :run do |c|
   c.action do |global_options, options, args|
+    case (ENV['RACK_ENV'] or "default").to_sym
+      when :test
+        DataMapperConfig.configure_test
+      when :production
+        DataMapperConfig.configure_production
+      else
+        DataMapperConfig.configure_development
+    end
+
     Recorders::WeeklyVisitsRecorder.new(logger).run
   end
 end

@@ -15,7 +15,7 @@ QUEUE environment variable.
 
 ## Format
 
-The expected format from the Google Drive collector is:
+The expected format from the collector is:
 
     {
       "envelope":{
@@ -25,21 +25,6 @@ The expected format from the Google Drive collector is:
        "payload":{
            :value => 0,
            :week_starting => "2012-08-06",
-           :site => "govuk"
-       }
-    }
-
-The expected format from the Google Analytics collector is:
-
-    {
-      "envelope":{
-        "collected_at":"2012-07-31T10:46:25+01:00",
-        "collector":"weekly_visits"
-       },
-       "payload":{
-           :value => 0,
-           :start_at => DateTime.parse("03/08/2012 11:00:00"),
-           :end_at => DateTime.parse("03/08/2012 12:00:00"),
            :site => "govuk"
        }
     }

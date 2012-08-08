@@ -11,82 +11,36 @@ describe "WeeklyVisitsRecorder" do
   it "should store weekly visits when processing drive message" do
     message = {
         :envelope => {
-            :collected_at => DateTime.now,
+            :collected_at => DateTime.now.strftime,
             :collector => "visits"
         },
         :payload => {
             :value => 700,
-            :week_starting => Date.parse("28/3/2011"),
+            :week_starting => "28/3/2011",
             :site => "directgov"
         }
     }
 
-    Recorders::WeeklyVisitsRecorder.process_drive_message(message)
+    Recorders::WeeklyVisitsRecorder.process_message(message)
 
     WeeklyVisits.all.should_not be_empty
-    end
+  end
 
   it "should store hourly data when processing analytics message" do
     message = {
         :envelope => {
-            :collected_at => DateTime.now,
+            :collected_at => DateTime.now.strftime,
             :collector => "visits"
         },
         :payload => {
             :value => 700,
-            :start_at => DateTime.parse("03/08/2012 11:00:00"),
-            :end_at => DateTime.parse("03/08/2012 12:00:00"),
+            :week_starting => "30/07/2012",
             :site => "govuk"
         }
     }
 
-    Recorders::WeeklyVisitsRecorder.process_analytics_message(message)
+    Recorders::WeeklyVisitsRecorder.process_message(message)
 
     WeeklyVisits.all.should_not be_empty
-    end
-
-  it "should store hourly data when processing analytics message for 23:00 - 00:00 hour on Sunday" do
-    message = {
-        :envelope => {
-            :collected_at => DateTime.now,
-            :collector => "visits"
-        },
-        :payload => {
-            :value => 700,
-            :start_at => DateTime.parse("05/08/2012 23:00:00"),
-            :end_at => DateTime.parse("05/08/2012 00:00:00"),
-            :site => "govuk"
-        }
-    }
-
-    Recorders::WeeklyVisitsRecorder.process_analytics_message(message)
-
-    WeeklyVisits.all.should_not be_empty
-    WeeklyVisits.first.week_starting.should == Date.parse("30/07/2012")
-  end
-
-  it "should add hourly data to an existing week" do
-    WeeklyVisits.create(
-        :value => 100,
-        :week_starting => Date.parse("30/07/2012"),
-        :site => "govuk"
-      )
-
-    message = {
-        :envelope => {
-            :collected_at => DateTime.now,
-            :collector => "visits"
-        },
-        :payload => {
-            :value => 700,
-            :start_at => DateTime.parse("03/08/2012 11:00:00"),
-            :end_at => DateTime.parse("03/08/2012 12:00:00"),
-            :site => "govuk"
-        }
-    }
-
-    Recorders::WeeklyVisitsRecorder.process_analytics_message(message)
-
-    WeeklyVisits.all.length.should == 1
   end
 end
