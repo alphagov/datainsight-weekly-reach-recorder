@@ -4,7 +4,7 @@ Bundler.require
 require 'bunny'
 require 'json'
 
-require_relative "../../lib/weekly_visits_model"
+require_relative "../weekly_visits_model"
 
 module Recorders
   class WeeklyVisitsRecorder
@@ -13,7 +13,7 @@ module Recorders
       @logger = logger
       client = Bunny.new ENV['AMQP']
       client.start
-      @queue = client.queue(ENV['QUEUE'] || '_weekly_visits_')
+      @queue = client.queue(ENV['QUEUE'] || 'weekly_visits')
       exchange = client.exchange('datainsight', :type => :topic)
 
       @queue.bind(exchange, :key => 'google_analytics.visits.weekly')
@@ -25,7 +25,7 @@ module Recorders
 
     def run
       @queue.subscribe do |msg|
-        @logger.debug("Received a message #{msg}")
+        @logger.debug("Received a message: #{msg}")
         WeeklyVisitsRecorder.process_message(JSON.parse(msg[:payload], :symbolize_names => true))
       end
     end
