@@ -19,16 +19,16 @@ configure :production do
   DataMapperConfig.configure_production
 end
 
-def extract_necessary_fields(weekly_visits)
-  weekly_visits.map { |each| {"date" => each.week_starting, "value" => each.value} }
+def convert_to_correct_format(weekly_visits)
+  weekly_visits.map { |each| {"date" => each.week_ending, "value" => each.value} }
 end
 
 get '/weekly-visits' do
   content_type :json
   {
-      :govuk => extract_necessary_fields(WeeklyVisits.govuk),
-      :directgov => extract_necessary_fields(WeeklyVisits.directgov),
-      :businesslink => extract_necessary_fields(WeeklyVisits.businesslink),
+      :govuk => convert_to_correct_format(WeeklyVisits.govuk),
+      :directgov => convert_to_correct_format(WeeklyVisits.directgov),
+      :businesslink => convert_to_correct_format(WeeklyVisits.businesslink),
 
       :highlight_spikes => WeeklyVisits.highlight_spikes,
       :highlight_troughs => WeeklyVisits.highlight_troughs
