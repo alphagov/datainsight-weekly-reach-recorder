@@ -31,12 +31,22 @@ module Recorders
     end
 
     def self.process_message(msg)
-      WeeklyVisits.create(
-          :value => msg[:payload][:value],
+      weekly_visits = WeeklyVisits.first(
           :week_starting => Date.parse(msg[:payload][:week_starting]),
-          :collected_at => DateTime.parse(msg[:envelope][:collected_at]),
           :site => msg[:payload][:site]
       )
+      if weekly_visits
+        weekly_visits.value = msg[:payload][:value]
+        weekly_visits.save
+      else
+        WeeklyVisits.create(
+            :value => msg[:payload][:value],
+            :week_starting => Date.parse(msg[:payload][:week_starting]),
+            :collected_at => DateTime.parse(msg[:envelope][:collected_at]),
+            :site => msg[:payload][:site]
+        )
+      end
     end
+
   end
 end

@@ -2,7 +2,7 @@ require_relative "test_helper"
 require_relative "../lib/recorders/weekly_visits_recorder"
 require_relative "../lib/weekly_visits_model"
 
-describe "WeeklyVisitsRecorder" do
+describe "WeeklyVisits" do
 
   after :each do
     WeeklyVisits.destroy
@@ -54,7 +54,7 @@ describe "WeeklyVisitsRecorder" do
     WeeklyVisits.govuk.map(&:value).reduce(&:+).should == 200
   end
 
-  it "should calculate the mean and median correctly" do
+  it "should calculate the median correctly" do
     even_data = [1,2,3,4,5,6,7,8]
     odd_data = [1,2,3,4,5,6,7,8,9]
 
