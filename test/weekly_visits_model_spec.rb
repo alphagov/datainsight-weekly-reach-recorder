@@ -11,19 +11,22 @@ describe "WeeklyVisits" do
   it "should return data for the past six months" do
     WeeklyVisits.create(
         :value => 100,
-        :week_starting => Date.today,
+        :start_at => Date.today,
+        :end_at => Date.today + 6,
         :site => "govuk"
     )
 
     WeeklyVisits.create(
         :value => 400,
-        :week_starting => Date.today<<12,
+        :start_at => Date.today << 12,
+        :end_at => (Date.today << 12) + 6,
         :site => "govuk"
     )
 
     WeeklyVisits.create(
         :value => 200,
-        :week_starting => Date.today<<6,
+        :start_at => Date.today << 6,
+        :end_at => (Date.today << 6) + 6,
         :site => "govuk"
     )
 
@@ -34,19 +37,22 @@ describe "WeeklyVisits" do
   it "should return data for the past six months for govuk only" do
     WeeklyVisits.create(
         :value => 100,
-        :week_starting => Date.today,
+        :start_at => Date.today,
+        :end_at => Date.today + 6,
         :site => "businesslink"
     )
 
     WeeklyVisits.create(
         :value => 400,
-        :week_starting => Date.today<<12,
+        :start_at => Date.today << 12,
+        :end_at => (Date.today << 12) + 6,
         :site => "govuk"
     )
 
     WeeklyVisits.create(
         :value => 200,
-        :week_starting => Date.today<<6,
+        :start_at => Date.today << 6,
+        :end_at => (Date.today << 6) + 6,
         :site => "govuk"
     )
 

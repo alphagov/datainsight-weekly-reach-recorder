@@ -5,17 +5,18 @@ class WeeklyVisits
   include DataMapper::Resource
   property :id, Serial
   property :value, Integer
-  property :week_starting, Date
+  property :start_at, Date
+  property :end_at, Date
   property :collected_at, DateTime
   property :site, String
 
   def week_ending
-    week_starting + 6
+    end_at
   end
 
   def self.last_six_months_data(site)
     past_six_months = (Date.today - 7) << 6
-    WeeklyVisits.all(:week_starting.gte => past_six_months, :site => site)
+    WeeklyVisits.all(:start_at.gte => past_six_months, :site => site)
   end
 
   def self.govuk

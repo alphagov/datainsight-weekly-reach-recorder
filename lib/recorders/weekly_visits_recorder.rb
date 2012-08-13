@@ -32,7 +32,8 @@ module Recorders
 
     def self.process_message(msg)
       weekly_visits = WeeklyVisits.first(
-          :week_starting => Date.parse(msg[:payload][:week_starting]),
+          :start_at => Date.parse(msg[:payload][:start_at]),
+          :end_at => Date.parse(msg[:payload][:end_at]),
           :site => msg[:payload][:site]
       )
       if weekly_visits
@@ -41,7 +42,8 @@ module Recorders
       else
         WeeklyVisits.create(
             :value => msg[:payload][:value],
-            :week_starting => Date.parse(msg[:payload][:week_starting]),
+            :start_at => Date.parse(msg[:payload][:start_at]),
+            :end_at => Date.parse(msg[:payload][:end_at]),
             :collected_at => DateTime.parse(msg[:envelope][:collected_at]),
             :site => msg[:payload][:site]
         )

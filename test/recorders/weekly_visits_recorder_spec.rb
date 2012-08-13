@@ -11,7 +11,8 @@ describe "WeeklyVisitsRecorder" do
         },
         :payload => {
             :value => 700,
-            :week_starting => "28/3/2011",
+            :start_at => "28/3/2011",
+            :end_at => "3/4/2011",
             :site => "directgov"
         }
     }
