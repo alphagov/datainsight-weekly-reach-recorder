@@ -16,7 +16,10 @@ class WeeklyVisits
 
   def self.last_six_months_data(site)
     past_six_months = (Date.today - 7) << 6
-    WeeklyVisits.all(:start_at.gte => past_six_months, :site => site)
+    WeeklyVisits.all(
+      :start_at.gte => past_six_months,
+      :site => site,
+      :order => [ :start_at.asc ])
   end
 
   def self.govuk
