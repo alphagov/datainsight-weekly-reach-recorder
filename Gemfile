@@ -11,5 +11,7 @@ gem "unicorn"
 group :test do
   gem "dm-sqlite-adapter", "1.2.0"
   gem "rspec"
+  gem "rack-test"
   gem "ci_reporter"
+  gem "factory_girl"
 end

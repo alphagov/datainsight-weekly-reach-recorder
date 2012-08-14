@@ -4,10 +4,12 @@ Bundler.require
 require 'bunny'
 require 'json'
 
-require_relative "../weekly_visits_model"
+require_relative "model"
 
-module Recorders
-  class WeeklyVisitsRecorder
+module WeeklyReach
+  class Recorder
+
+    ROUTING_KEYS = %w(google_analytics.visits.weekly google_analytics.visitors.weekly google_drive.visits.weekly google_drive.visitors.weekly)
 
     def initialize(logger)
       @logger = logger
@@ -16,12 +18,13 @@ module Recorders
     def run
       queue.subscribe do |msg|
         @logger.debug("Received a message: #{msg}")
-        process_message(JSON.parse(msg[:payload], :symbolize_names => true))
+        process_message(parse_amqp_message(msg))
       end
     end
 
     def process_message(msg)
-      weekly_visits = WeeklyVisits.first(
+      weekly_visits = Model.first(
+          :metric => parse_metric(msg[:envelope][:_routing_key]),
           :start_at => parse_start_at(msg[:payload][:start_at]),
           :end_at => parse_end_at(msg[:payload][:end_at]),
           :site => msg[:payload][:site]
@@ -31,8 +34,9 @@ module Recorders
         weekly_visits.collected_at = msg[:envelope][:collected_at]
         weekly_visits.save
       else
-        WeeklyVisits.create(
+        Model.create(
             :value => msg[:payload][:value],
+            :metric => parse_metric(msg[:envelope][:_routing_key]),
             :start_at => parse_start_at(msg[:payload][:start_at]),
             :end_at => parse_end_at(msg[:payload][:end_at]),
             :collected_at => DateTime.parse(msg[:envelope][:collected_at]),
@@ -49,16 +53,25 @@ module Recorders
     def create_queue
       client = Bunny.new ENV['AMQP']
       client.start
-      queue = client.queue(ENV['QUEUE'] || 'weekly_visits')
+      queue = client.queue(ENV['QUEUE'] || 'weekly_reach')
       exchange = client.exchange('datainsight', :type => :topic)
 
-      queue.bind(exchange, :key => 'google_analytics.visits.weekly')
-      @logger.info("Bound to google_analytics.visits.weekly, listening for events")
-
-      queue.bind(exchange, :key => 'google_drive.visits.weekly')
-      @logger.info("Bound to google_drive.visits.weekly, listening for events")
+      ROUTING_KEYS.each do |key|
+        queue.bind(exchange, :key => key)
+        @logger.info("Bound to #{key}, listening for events")
+      end
 
       queue
+    end
+
+    def parse_amqp_message(raw_message)
+      message = JSON.parse(raw_message[:payload], :symbolize_names => true)
+      message[:envelope][:_routing_key] = raw_message[:delivery_details][:routing_key]
+      message
+    end
+
+    def parse_metric(routing_key)
+      /\.(?<metric>visits|visitors)\.weekly$/.match(routing_key)[:metric] or raise "Invalid metric for key [#{routing_key}] "
     end
 
     def parse_start_at(start_at)

@@ -1,13 +1,14 @@
 require_relative "../test_helper"
-require_relative "../../lib/recorders/weekly_visits_recorder"
-require_relative "../../lib/weekly_visits_model"
+require_relative "../../lib/recorder"
+require_relative "../../lib/model"
 
 describe "WeeklyVisitsRecorder" do
   before(:each) do
     @message = {
         :envelope => {
             :collected_at => DateTime.now.strftime,
-            :collector => "visits"
+            :collector => "visits",
+            :_routing_key => "google_analytics.visits.weekly"
         },
         :payload => {
             :value => 700,
@@ -16,18 +17,19 @@ describe "WeeklyVisitsRecorder" do
             :site => "directgov"
         }
     }
-    @recorder = Recorders::WeeklyVisitsRecorder.new(nil)
+    @recorder = WeeklyReach::Recorder.new(nil)
   end
 
   after :each do
-    WeeklyVisits.destroy
+    WeeklyReach::Model.destroy
   end
 
   it "should store weekly visits when processing drive message" do
     @recorder.process_message(@message)
 
-    WeeklyVisits.all.should_not be_empty
-    item = WeeklyVisits.first
+    WeeklyReach::Model.all.should_not be_empty
+    item = WeeklyReach::Model.first
+    item.metric.should == "visits"
     item.value.should == 700
     item.start_at.should == Date.new(2011, 3, 28)
     item.end_at.should == Date.new(2011, 4, 3)
@@ -38,8 +40,9 @@ describe "WeeklyVisitsRecorder" do
     @message[:payload][:site] = "govuk"
     @recorder.process_message(@message)
 
-    WeeklyVisits.all.should_not be_empty
-    item = WeeklyVisits.first
+    WeeklyReach::Model.all.should_not be_empty
+    item = WeeklyReach::Model.first
+    item.metric.should == "visits"
     item.value.should == 700
     item.start_at.should == Date.new(2011, 3, 28)
     item.end_at.should == Date.new(2011, 4, 3)
@@ -49,15 +52,29 @@ describe "WeeklyVisitsRecorder" do
   it "should correctly handle end date over month boundaries" do
     @message[:payload][:end_at] = "2011-09-01T00:00:00"
     @recorder.process_message(@message)
-    item = WeeklyVisits.first
+    item = WeeklyReach::Model.first
     item.end_at.should == Date.new(2011, 8, 31)
+  end
+
+  it "should store visitors metric" do
+    @message[:envelope][:_routing_key] = "google_analytics.visitors.weekly"
+    @recorder.process_message(@message)
+    item = WeeklyReach::Model.first
+    item.metric.should == "visitors"
+  end
+
+  it "should raise an error if an invalid metric is parsed" do
+    @message[:envelope][:_routing_key] = "google_analytics.invalid.weekly"
+    lambda do
+      @recorder.process_message(@message)
+    end.should raise_error
   end
 
   it "should update existing measurements" do
     @recorder.process_message(@message)
     @message[:payload][:value] = 900
     @recorder.process_message(@message)
-    WeeklyVisits.all.length.should == 1
-    WeeklyVisits.first.value.should == 900
+    WeeklyReach::Model.all.length.should == 1
+    WeeklyReach::Model.first.value.should == 900
   end
 end
