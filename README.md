@@ -45,11 +45,11 @@ overridden with the AMQP environment variable.
 The recorder provides a command which will listen for messages on the
 topic store the latest message locally for use by the API.
 
-    bundle exec bin/weekly-visits-recorder run
+    bundle exec bin/weekly-reach-recorder run
 
 Full help details can be found with:
 
-    bundle exec bin/weekly-visits-recorder help
+    bundle exec bin/weekly-reach-recorder help
 
 
 ## Running the API

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-PROJECT_NAME="datainsight-weekly-visits-recorder"
+PROJECT_NAME="datainsight-weekly-reach-recorder"
 
 set -e
 
