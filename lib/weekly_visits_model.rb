@@ -48,13 +48,21 @@ class WeeklyVisits
 
   def self.highlight_spikes
     data = govuk.map { |each| each["value"] }
-    (data.max - self.median(data)).abs / self.median(data).to_f > (HIGHLIGHT_SPIKES_THRESHOLD)
+    if data.empty?
+      false
+    else
+      (data.max - self.median(data)).abs / self.median(data).to_f > (HIGHLIGHT_SPIKES_THRESHOLD)
+    end
   end
 
   def self.highlight_troughs
     data = govuk.map { |each| each["value"] }
-    highlight_troughs_threshold = 1 - 1 / (1 + HIGHLIGHT_SPIKES_THRESHOLD)
-    (data.min - self.median(data)).abs / self.median(data).to_f > highlight_troughs_threshold
+    if data.empty?
+      false
+    else
+      highlight_troughs_threshold = 1 - 1 / (1 + HIGHLIGHT_SPIKES_THRESHOLD)
+      (data.min - self.median(data)).abs / self.median(data).to_f > highlight_troughs_threshold
+    end
   end
 
 end
