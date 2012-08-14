@@ -2,3 +2,4 @@
 .bundle
 vendor
 weekly_visits.json
+*.zip
