@@ -20,15 +20,7 @@ desc %q(start the recorder process to consume 'visits' messages from the MQ)
 
 command :run do |c|
   c.action do |global_options, options, args|
-    case (ENV['RACK_ENV'] or "default").to_sym
-      when :test
-        DataMapperConfig.configure_test
-      when :production
-        DataMapperConfig.configure_production
-      else
-        DataMapperConfig.configure_development
-    end
-
+    DataMapperConfig.configure
     Recorders::WeeklyVisitsRecorder.new(logger).run
   end
 end
