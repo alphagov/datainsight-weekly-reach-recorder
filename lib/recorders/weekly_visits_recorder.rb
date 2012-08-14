@@ -28,6 +28,7 @@ module Recorders
       )
       if weekly_visits
         weekly_visits.value = msg[:payload][:value]
+        weekly_visits.collected_at = msg[:envelope][:collected_at]
         weekly_visits.save
       else
         WeeklyVisits.create(
