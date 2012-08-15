@@ -36,6 +36,20 @@ describe "WeeklyVisitsRecorder" do
     item.site.should == "directgov"
   end
 
+  it "should delete the record when processing a nil drive message" do
+    FactoryGirl.create(:model,
+        site: "directgov",
+        metric: "visits",
+        start_at: DateTime.parse("2011-03-28T00:00:00"),
+        end_at: DateTime.parse("2011-04-03T00:00:00"),
+        value: 700
+    )
+    @message[:payload][:value] = nil
+    @recorder.process_message(@message)
+
+    WeeklyReach::Model.all.should be_empty
+  end
+
   it "should store weekly data when processing analytics message" do
     @message[:payload][:site] = "govuk"
     @recorder.process_message(@message)

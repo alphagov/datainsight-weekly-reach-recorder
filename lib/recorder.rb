@@ -23,25 +23,32 @@ module WeeklyReach
     end
 
     def process_message(msg)
-      weekly_visits = Model.first(
+      params = {
           :metric => parse_metric(msg[:envelope][:_routing_key]),
           :start_at => parse_start_at(msg[:payload][:start_at]),
           :end_at => parse_end_at(msg[:payload][:end_at]),
           :site => msg[:payload][:site]
-      )
-      if weekly_visits
-        weekly_visits.value = msg[:payload][:value]
-        weekly_visits.collected_at = msg[:envelope][:collected_at]
-        weekly_visits.save
+      }
+      weekly_visits = Model.first(params)
+      if msg[:payload][:value].nil?
+        if weekly_visits
+          weekly_visits.destroy
+        end
       else
-        Model.create(
-            :value => msg[:payload][:value],
-            :metric => parse_metric(msg[:envelope][:_routing_key]),
-            :start_at => parse_start_at(msg[:payload][:start_at]),
-            :end_at => parse_end_at(msg[:payload][:end_at]),
-            :collected_at => DateTime.parse(msg[:envelope][:collected_at]),
-            :site => msg[:payload][:site]
-        )
+        if weekly_visits
+          weekly_visits.value = msg[:payload][:value]
+          weekly_visits.collected_at = msg[:envelope][:collected_at]
+          weekly_visits.save
+        else
+          Model.create(
+              :value => msg[:payload][:value],
+              :metric => parse_metric(msg[:envelope][:_routing_key]),
+              :start_at => parse_start_at(msg[:payload][:start_at]),
+              :end_at => parse_end_at(msg[:payload][:end_at]),
+              :collected_at => DateTime.parse(msg[:envelope][:collected_at]),
+              :site => msg[:payload][:site]
+          )
+        end
       end
     end
 
@@ -75,7 +82,7 @@ module WeeklyReach
     end
 
     def parse_start_at(start_at)
-      Date.parse(start_at)
+      DateTime.parse(start_at)
     end
 
     # This recorder stores start and end as dates while the message format uses date times on date boundaries (midnight).
@@ -84,9 +91,9 @@ module WeeklyReach
       end_at = DateTime.parse(end_at)
       if (end_at.hour + end_at.minute + end_at.second) == 0
         # up to midnight, so including the previous day
-        end_at.to_date - 1
+        end_at - 1
       else
-        end_at.to_date
+        end_at
       end
     end
 
