@@ -1,4 +1,4 @@
-require_relative "test_helper"
+require_relative "spec_helper"
 
 describe "weekly-visitors" do
   include Rack::Test::Methods

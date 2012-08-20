@@ -1,4 +1,4 @@
-require_relative "../test_helper"
+require_relative "../spec_helper"
 require_relative "../../lib/recorder"
 require_relative "../../lib/model"
 
