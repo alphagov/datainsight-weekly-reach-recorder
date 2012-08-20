@@ -67,11 +67,40 @@ describe "WeeklyVisits" do
   end
 
   it "should calculate the median correctly" do
-    even_data = [1,2,3,4,5,6,7,8]
-    odd_data = [1,2,3,4,5,6,7,8,9]
+    even_data = [1, 2, 3, 4, 5, 6, 7, 8]
+    odd_data = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     WeeklyReach::Model.median(even_data).should == 4.5
     WeeklyReach::Model.median(odd_data).should == 5
+  end
+
+  describe "validates start and end at" do
+    it "should be valid data if data is ok" do
+      model = FactoryGirl.create(:model, {
+          :start_at => Date.parse("2012-08-12"),
+          :end_at => Date.parse("2012-08-18"),
+      })
+
+      model.should be_valid
+    end
+
+    it "should not be valid if there are 6 days between start at and end at" do
+      model = FactoryGirl.create(:model, {
+          :start_at => Date.parse("2012-08-12"),
+          :end_at => Date.parse("2012-08-17"),
+      })
+
+      model.should_not be_valid
+    end
+
+    it "should not be valid if there are 8 days between start at and end at" do
+      model = FactoryGirl.create(:model, {
+          :start_at => Date.parse("2012-08-12"),
+          :end_at => Date.parse("2012-08-19"),
+      })
+
+      model.should_not be_valid
+    end
   end
 
 end

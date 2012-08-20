@@ -64,6 +64,7 @@ describe "WeeklyVisitsRecorder" do
   end
 
   it "should correctly handle end date over month boundaries" do
+    @message[:payload][:start_at] = "2011-08-25T00:00:00"
     @message[:payload][:end_at] = "2011-09-01T00:00:00"
     @recorder.process_message(@message)
     item = WeeklyReach::Model.first

@@ -12,6 +12,8 @@ module WeeklyReach
     property :collected_at, DateTime
     property :site, String
 
+    validates_with_method :validate_week_length
+
     def week_ending
       end_at
     end
@@ -65,6 +67,15 @@ module WeeklyReach
       else
         highlight_troughs_threshold = 1 - 1 / (1 + HIGHLIGHT_SPIKES_THRESHOLD)
         (data.min - self.median(data)).abs / self.median(data).to_f > highlight_troughs_threshold
+      end
+    end
+
+    private
+    def validate_week_length
+      if (self.end_at - self.start_at) == 6
+        true
+      else
+        [false, "The time between start at and end at should be a week."]
       end
     end
 
