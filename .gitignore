@@ -3,3 +3,4 @@
 vendor
 weekly_visits.json
 *.zip
+spec/reports
