@@ -17,8 +17,12 @@ module WeeklyReach
 
     def run
       queue.subscribe do |msg|
-        @logger.debug("Received a message: #{msg}")
-        process_message(parse_amqp_message(msg))
+        begin
+          @logger.debug("Received a message: #{msg}")
+          process_message(parse_amqp_message(msg))
+        rescue Exception => e
+          @logger.error("#{e} \n" + e.backtrace.join("\n"))
+        end
       end
     end
 
