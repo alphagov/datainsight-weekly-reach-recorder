@@ -4,15 +4,22 @@ Bundler.require
 module WeeklyReach
   class Model
     include DataMapper::Resource
-    property :id, Serial
-    property :metric, String
-    property :value, Integer
-    property :start_at, Date
-    property :end_at, Date
-    property :collected_at, DateTime
-    property :site, String
 
-    validates_with_method :validate_week_length
+    SITES = %w(govuk directgov businesslink)
+    METRICS = %w(visits visitors)
+
+    property :id, Serial
+    property :metric, String, required: true
+    property :value, Integer, required: true
+    property :start_at, Date, required: true
+    property :end_at, Date, required: true
+    property :collected_at, DateTime, required: true
+    property :site, String, required: true
+
+    validates_within :site, :set => SITES
+    validates_within :metric, :set => METRICS
+    validates_with_method :validate_value_positive, :if => lambda { |m| not m.value.nil? }
+    validates_with_method :validate_week_length, :if => lambda { |m| (not m.start_at.nil?) and (not m.end_at.nil?) }
 
     def week_ending
       end_at
@@ -71,6 +78,14 @@ module WeeklyReach
     end
 
     private
+    def validate_value_positive
+      if value >= 0
+        true
+      else
+        [false, "Value cannot be negative."]
+      end
+    end
+
     def validate_week_length
       if (self.end_at - self.start_at) == 6
         true

@@ -14,6 +14,7 @@ describe "WeeklyVisits" do
         :metric => "visits",
         :start_at => Date.today,
         :end_at => Date.today + 6,
+        :collected_at => DateTime.now,
         :site => "govuk"
     )
 
@@ -22,6 +23,7 @@ describe "WeeklyVisits" do
         :metric => "visits",
         :start_at => Date.today << 12,
         :end_at => (Date.today << 12) + 6,
+        :collected_at => DateTime.now,
         :site => "govuk"
     )
 
@@ -30,6 +32,7 @@ describe "WeeklyVisits" do
         :metric => "visits",
         :start_at => Date.today << 6,
         :end_at => (Date.today << 6) + 6,
+        :collected_at => DateTime.now,
         :site => "govuk"
     )
 
@@ -43,6 +46,7 @@ describe "WeeklyVisits" do
         :metric => "visits",
         :start_at => Date.today,
         :end_at => Date.today + 6,
+        :collected_at => DateTime.now,
         :site => "businesslink"
     )
 
@@ -51,6 +55,7 @@ describe "WeeklyVisits" do
         :metric => "visits",
         :start_at => Date.today << 12,
         :end_at => (Date.today << 12) + 6,
+        :collected_at => DateTime.now,
         :site => "govuk"
     )
 
@@ -59,6 +64,7 @@ describe "WeeklyVisits" do
         :metric => "visits",
         :start_at => Date.today << 6,
         :end_at => (Date.today << 6) + 6,
+        :collected_at => DateTime.now,
         :site => "govuk"
     )
 
@@ -100,6 +106,76 @@ describe "WeeklyVisits" do
       })
 
       model.should_not be_valid
+    end
+  end
+  
+  describe "field validation" do
+    it "should be invalid if value is null" do
+      FactoryGirl.build(:model, :value => nil).should_not be_valid
+    end
+
+    it "should be value if the value is positive" do
+      FactoryGirl.build(:model, :value => 1).should be_valid
+    end
+
+    it "should be invalid if value is negative" do
+      FactoryGirl.build(:model, :value => -1).should_not be_valid
+    end
+
+    it "should be valid if value is zero" do
+      FactoryGirl.build(:model, :value => 0).should be_valid
+    end
+
+    it "should have a non-null start_at" do
+      FactoryGirl.build(:model, :start_at => nil).should_not be_valid
+    end
+
+    it "should have a non-null end_at" do
+      FactoryGirl.build(:model, :end_at => nil).should_not be_valid
+    end
+
+    it "should have a non-null collected_at" do
+      FactoryGirl.build(:model, :collected_at => nil).should_not be_valid
+    end
+
+    it "should have a non-null site" do
+      FactoryGirl.build(:model, :site => nil).should_not be_valid
+    end
+
+    describe "should have a site equal to one of govuk, directgov or businesslink" do
+      it "should allow govuk" do
+        FactoryGirl.build(:model, :site => "govuk").should be_valid
+      end
+
+      it "should allow directgov" do
+        FactoryGirl.build(:model, :site => "directgov").should be_valid
+      end
+
+      it "should allow businesslink" do
+        FactoryGirl.build(:model, :site => "businesslink").should be_valid
+      end
+
+      it "should fail with an invalid site" do
+        FactoryGirl.build(:model, :site => "invalid").should_not be_valid
+      end
+    end
+
+    it "should have a non-null metric" do
+      FactoryGirl.build(:model, :metric => nil).should_not be_valid
+    end
+
+    describe "should have a metric equal to one of visits or visitors" do
+      it "should allow visits" do
+        FactoryGirl.build(:model, :metric => "visits").should be_valid
+      end
+
+      it "should allow visitors" do
+        FactoryGirl.build(:model, :metric => "visitors").should be_valid
+      end
+
+      it "should not allow invalid" do
+        FactoryGirl.build(:model, :metric => "invalid").should_not be_valid
+      end
     end
   end
 

@@ -99,4 +99,31 @@ describe "WeeklyVisitsRecorder" do
     WeeklyReach::Model.all.length.should == 1
     WeeklyReach::Model.first.value.should == 900
   end
+
+  describe "validation" do
+    it "should fail if value is not present" do
+      @message[:payload].delete(:value)
+
+      lambda do
+        @recorder.process_message(@message)
+      end.should raise_error
+    end
+
+    it "should fail if value is not nil and cannot be parsed as a integer" do
+      @message[:payload][:value] = "invalid"
+
+      lambda do
+        @recorder.process_message(@message)
+      end.should raise_error
+    end
+
+    it "should allow nil as a value" do
+      @message[:payload][:value] = nil
+
+      lambda do
+        @recorder.process_message(@message)
+      end.should_not raise_error
+    end
+
+  end
 end
