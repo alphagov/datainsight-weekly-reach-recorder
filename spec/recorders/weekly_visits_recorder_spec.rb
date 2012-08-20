@@ -85,6 +85,13 @@ describe "WeeklyVisitsRecorder" do
     end.should raise_error
   end
 
+  it "should raise an error with invalid week on insert" do
+    @message[:payload][:start_at] = "2011-03-29T00:00:00" #to short week
+    lambda do
+      @recorder.process_message(@message)
+    end.should raise_error
+  end
+
   it "should update existing measurements" do
     @recorder.process_message(@message)
     @message[:payload][:value] = 900

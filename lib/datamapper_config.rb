@@ -11,6 +11,7 @@ module DataMapperConfig
       else
         DataMapperConfig.configure_development
     end
+    DataMapper::Model.raise_on_save_failure = true
   end
 
   def self.configure_development
