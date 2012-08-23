@@ -20,6 +20,15 @@ fi
 #HOST="deploy@datainsight"
 HOST="deploy@datainsight.alphagov.co.uk"
 
+# remove older deployments
+clean_old_files() {
+	DIR=$1
+	OLD=$(ssh $HOST "ls -t '$DIR'" | tail -n +2)
+	for file in $OLD; do echo "remove $DIR/$file"; ssh $HOST rm -rf $DIR/$file; done
+}
+clean_old_files /srv/$PROJECT_NAME/release
+clean_old_files /srv/$PROJECT_NAME/packages
+
 scp $PROJECT_NAME-$VERSION.zip $HOST:/srv/$PROJECT_NAME/packages
 # deploy
 echo -e "${ANSI_YELLOW}Deploying package${ANSI_RESET}"
