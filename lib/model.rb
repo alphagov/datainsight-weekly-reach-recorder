@@ -57,10 +57,14 @@ module WeeklyReach
     end
 
     HIGHLIGHT_SPIKES_THRESHOLD = 0.15
+    MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT = 0.1
 
     def self.highlight_spikes(metric)
       data = govuk(metric).map { |each| each["value"] }
+      max_of_other_values = directgov(metric).concat(businesslink(metric)).map { |each| each["value"] }.max
       if data.empty?
+        false
+      elsif data.max < MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT * max_of_other_values
         false
       else
         (data.max - self.median(data)).abs / self.median(data).to_f > (HIGHLIGHT_SPIKES_THRESHOLD)

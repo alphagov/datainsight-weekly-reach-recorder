@@ -80,6 +80,54 @@ describe "WeeklyVisits" do
     WeeklyReach::Model.median(odd_data).should == 5
   end
 
+  it "should not make spikes highlighted if govuk range is less than 10% of y-axis range" do
+    FactoryGirl.create(:visits_model, {
+        :start_at => Date.today - 14,
+        :end_at => Date.today - 14 + 6,
+        :value => 90,
+        :site => "govuk"
+    })
+    FactoryGirl.create(:visits_model, {
+        :start_at => Date.today - 21,
+        :end_at => Date.today - 21 + 6,
+        :value => 10,
+        :site => "govuk"
+    })
+
+    FactoryGirl.create(:visits_model, {
+        :start_at => Date.today - 14,
+        :end_at => Date.today - 14 + 6,
+        :value => 1000,
+        :site => "directgov"
+    })
+
+    WeeklyReach::Model.highlight_spikes(:visits).should == false
+  end
+
+  it "should make spikes highlighted if govuk range is more than 10% of y-axis range" do
+    FactoryGirl.create(:visits_model, {
+        :start_at => Date.today - 14,
+        :end_at => Date.today - 14 + 6,
+        :value => 110,
+        :site => "govuk"
+    })
+    FactoryGirl.create(:visits_model, {
+        :start_at => Date.today - 21,
+        :end_at => Date.today - 21 + 6,
+        :value => 10,
+        :site => "govuk"
+    })
+
+    FactoryGirl.create(:visits_model, {
+        :start_at => Date.today - 14,
+        :end_at => Date.today - 14 + 6,
+        :value => 1000,
+        :site => "directgov"
+    })
+
+    WeeklyReach::Model.highlight_spikes(:visits).should == true
+  end
+
   describe "validates start and end at" do
     it "should be valid data if data is ok" do
       model = FactoryGirl.create(:model, {
@@ -108,7 +156,7 @@ describe "WeeklyVisits" do
       model.should_not be_valid
     end
   end
-  
+
   describe "field validation" do
     it "should be invalid if value is null" do
       FactoryGirl.build(:model, :value => nil).should_not be_valid

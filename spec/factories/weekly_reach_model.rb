@@ -10,4 +10,11 @@ FactoryGirl.define do
     site "govuk"
     collected_at DateTime.now
   end
+
+  factory :visits_model, parent: :model do
+  end
+
+  factory :visitors_model, parent: :model do
+    metric "visitors"
+  end
 end
