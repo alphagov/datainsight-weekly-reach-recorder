@@ -59,12 +59,16 @@ module WeeklyReach
     HIGHLIGHT_SPIKES_THRESHOLD = 0.15
     MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT = 0.1
 
+    def self.should_show_gradient?(data, metric)
+      max_of_other_values = directgov(metric).concat(businesslink(metric)).map { |each| each["value"] }.max
+      data.max < (MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT * max_of_other_values)
+    end
+
     def self.highlight_spikes(metric)
       data = govuk(metric).map { |each| each["value"] }
-      max_of_other_values = directgov(metric).concat(businesslink(metric)).map { |each| each["value"] }.max
       if data.empty?
         false
-      elsif data.max < MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT * max_of_other_values
+      elsif self.should_show_gradient?(data, metric)
         false
       else
         (data.max - self.median(data)).abs / self.median(data).to_f > (HIGHLIGHT_SPIKES_THRESHOLD)
@@ -74,6 +78,8 @@ module WeeklyReach
     def self.highlight_troughs(metric)
       data = govuk(metric).map { |each| each["value"] }
       if data.empty?
+        false
+      elsif self.should_show_gradient?(data, metric)
         false
       else
         highlight_troughs_threshold = 1 - 1 / (1 + HIGHLIGHT_SPIKES_THRESHOLD)
