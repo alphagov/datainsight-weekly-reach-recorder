@@ -1,11 +1,16 @@
 require 'sinatra'
 require 'json'
+require 'datainsight_logging'
 
 require_relative 'model'
 require_relative 'datamapper_config'
 
+helpers Datainsight::Logging::Helpers
+
 configure do
+  enable :logging
   unless test?
+    Datainsight::Logging.configure(:type => :exposer)
     DataMapperConfig.configure
   end
 end
@@ -33,4 +38,8 @@ end
 get '/weekly-visitors' do
   content_type :json
   create_json_response(:visitors)
+end
+
+error do
+  logger.error env['sinatra.error']
 end

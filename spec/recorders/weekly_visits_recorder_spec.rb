@@ -17,7 +17,7 @@ describe "WeeklyVisitsRecorder" do
             :site => "directgov"
         }
     }
-    @recorder = WeeklyReach::Recorder.new(nil)
+    @recorder = WeeklyReach::Recorder.new
   end
 
   after :each do

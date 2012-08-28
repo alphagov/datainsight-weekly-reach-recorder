@@ -13,15 +13,13 @@ program_desc 'Recorder for "Weekly Visits"'
 
 version 0.1
 
-logger = Logger.new(STDOUT)
-logger.level = Logger::DEBUG
-
 desc %q(start the recorder process to consume 'visits' messages from the MQ)
 
 command :run do |c|
   c.action do |global_options, options, args|
+    Datainsight::Logging.configure(:type => :recorder)
     DataMapperConfig.configure
-    WeeklyReach::Recorder.new(logger).run
+    WeeklyReach::Recorder.new.run
   end
 end
 

@@ -11,17 +11,14 @@ module WeeklyReach
 
     ROUTING_KEYS = %w(google_analytics.visits.weekly google_analytics.visitors.weekly google_drive.visits.weekly google_drive.visitors.weekly)
 
-    def initialize(logger)
-      @logger = logger
-    end
 
     def run
       queue.subscribe do |msg|
         begin
-          @logger.debug("Received a message: #{msg}")
+          logger.debug { "Received a message: #{msg}" }
           process_message(parse_amqp_message(msg))
         rescue Exception => e
-          @logger.error("#{e} \n" + e.backtrace.join("\n"))
+          logger.error { e }
         end
       end
     end
@@ -77,7 +74,7 @@ module WeeklyReach
 
       ROUTING_KEYS.each do |key|
         queue.bind(exchange, :key => key)
-        @logger.info("Bound to #{key}, listening for events")
+        logger.info("Bound to #{key}, listening for events")
       end
 
       queue
