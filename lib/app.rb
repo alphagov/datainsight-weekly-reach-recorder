@@ -1,6 +1,6 @@
-require 'sinatra'
 require 'json'
-require 'datainsight_logging'
+require 'bundler/setup'
+Bundler.require(:default, :exposer)
 
 require_relative 'model'
 require_relative 'datamapper_config'

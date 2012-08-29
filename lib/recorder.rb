@@ -1,8 +1,7 @@
-require 'bundler/setup'
-Bundler.require
-
-require 'bunny'
 require 'json'
+
+require 'bundler/setup'
+Bundler.require(:default, :recorder)
 
 require_relative "model"
 
