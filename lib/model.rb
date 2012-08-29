@@ -60,7 +60,7 @@ module WeeklyReach
     MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT = 0.1
 
     def self.should_show_gradient?(data, metric)
-      max_of_other_values = directgov(metric).concat(businesslink(metric)).map { |each| each["value"] }.max
+      max_of_other_values = (directgov(metric).concat(businesslink(metric)).map { |each| each["value"] } << 0).max
       data.max < (MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT * max_of_other_values)
     end
 

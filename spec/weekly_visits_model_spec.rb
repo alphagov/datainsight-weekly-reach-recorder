@@ -152,6 +152,23 @@ describe "WeeklyVisits" do
     WeeklyReach::Model.highlight_troughs(:visits).should == false
   end
 
+  it "should make troughs highlighted if no directgov or businesslink data is available" do
+    FactoryGirl.create(:visits_model, {
+        :start_at => Date.today - 14,
+        :end_at => Date.today - 14 + 6,
+        :value => 90,
+        :site => "govuk"
+    })
+    FactoryGirl.create(:visits_model, {
+        :start_at => Date.today - 21,
+        :end_at => Date.today - 21 + 6,
+        :value => 10,
+        :site => "govuk"
+    })
+
+    WeeklyReach::Model.highlight_troughs(:visits).should == true
+  end
+
   it "should make troughs highlighted if govuk range is more than 10% of y-axis range" do
     FactoryGirl.create(:visits_model, {
         :start_at => Date.today - 14,
