@@ -36,6 +36,8 @@ ssh $HOST "mkdir /srv/$PROJECT_NAME/release/$VERSION; unzip -o /srv/$PROJECT_NAM
 # link
 echo -e "${ANSI_YELLOW}Linking package${ANSI_RESET}"
 ssh $HOST "rm /srv/$PROJECT_NAME/current; ln -s /srv/$PROJECT_NAME/release/$VERSION/ /srv/$PROJECT_NAME/current;"
+echo -e "${ANSI_YELLOW}Executing Bundle install${ANSI_RESET}"
+ssh $HOST "cd /srv/$PROJECT_NAME/current; bundle install --path vendor --local"
 # restart
 echo -e "${ANSI_YELLOW}Restarting web service${ANSI_RESET}"
 ssh $HOST "sudo service $PROJECT_NAME-web restart"
