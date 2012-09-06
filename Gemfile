@@ -1,10 +1,10 @@
 source "https://rubygems.org"
+source 'https://gems.gemfury.com/vo6ZrmjBQu5szyywDszE/'
 
 gem "data_mapper", "1.2.0"
 gem "dm-mysql-adapter", "1.2.0"
 gem "rake"
-gem "datainsight_logging", :git => "git@github.com:alphagov/datainsight_logging.git"
-#gem "datainsight_logging", :path => "../datainsight_logging"
+gem "datainsight_logging"
 
 group :exposer do
   gem "sinatra"
