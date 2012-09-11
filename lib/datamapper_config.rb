@@ -22,7 +22,7 @@ module DataMapperConfig
   end
 
   def self.configure_production
-    DataMapper.setup(:default, 'mysql://datainsights:@localhost/datainsight_weekly_reach')
+    DataMapper.setup(:default, 'mysql://datainsight:@localhost/datainsight_weekly_reach')
     DataMapper.finalize
     DataMapper.auto_upgrade!
   end
