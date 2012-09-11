@@ -1,1 +1,1 @@
-web: bundle exec bin/recorder run
+web: env RACK_ENV=production bundle exec bin/recorder run
