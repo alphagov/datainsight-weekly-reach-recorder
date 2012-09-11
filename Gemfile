@@ -22,4 +22,5 @@ group :test do
   gem "rack-test"
   gem "ci_reporter"
   gem "factory_girl"
+  gem "timecop"
 end

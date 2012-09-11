@@ -7,8 +7,13 @@ describe "weekly-visitors" do
     Sinatra::Application
   end
 
+  before(:each) do
+    Timecop.freeze(Time.utc(2012, 9, 11, 18, 0, 0))
+  end
+
   after(:each) do
     WeeklyReach::Model.destroy!
+    Timecop.return
   end
 
   def last_sunday_of(date_time)
