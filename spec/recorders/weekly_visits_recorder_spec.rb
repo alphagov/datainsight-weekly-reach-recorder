@@ -11,10 +11,12 @@ describe "WeeklyVisitsRecorder" do
             :_routing_key => "google_analytics.visits.weekly"
         },
         :payload => {
-            :value => 700,
             :start_at => "2011-03-28T00:00:00",
             :end_at => "2011-04-04T00:00:00",
-            :site => "directgov"
+            :value => {
+              :visits => 700,
+              :site => "directgov"
+            }
         }
     }
     @recorder = WeeklyReach::Recorder.new
@@ -44,14 +46,14 @@ describe "WeeklyVisitsRecorder" do
         end_at: DateTime.parse("2011-04-03T00:00:00"),
         value: 700
     )
-    @message[:payload][:value] = nil
+    @message[:payload][:value][:visits] = nil
     @recorder.process_message(@message)
 
     WeeklyReach::Model.all.should be_empty
   end
 
   it "should store weekly data when processing analytics message" do
-    @message[:payload][:site] = "govuk"
+    @message[:payload][:value][:site] = "govuk"
     @recorder.process_message(@message)
 
     WeeklyReach::Model.all.should_not be_empty
@@ -73,6 +75,7 @@ describe "WeeklyVisitsRecorder" do
 
   it "should store visitors metric" do
     @message[:envelope][:_routing_key] = "google_analytics.visitors.weekly"
+    @message[:payload][:value][:visitors] = @message[:payload][:value].delete(:visits)
     @recorder.process_message(@message)
     item = WeeklyReach::Model.first
     item.metric.should == "visitors"
@@ -94,7 +97,7 @@ describe "WeeklyVisitsRecorder" do
 
   it "should update existing measurements" do
     @recorder.process_message(@message)
-    @message[:payload][:value] = 900
+    @message[:payload][:value][:visits] = 900
     @recorder.process_message(@message)
     WeeklyReach::Model.all.length.should == 1
     WeeklyReach::Model.first.value.should == 900
@@ -118,7 +121,7 @@ describe "WeeklyVisitsRecorder" do
     end
 
     it "should allow nil as a value" do
-      @message[:payload][:value] = nil
+      @message[:payload][:value][:visits] = nil
 
       lambda do
         @recorder.process_message(@message)

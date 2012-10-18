@@ -23,40 +23,42 @@ module WeeklyReach
     end
 
     def process_message(message)
-      validate_message(message)
+      metric = parse_metric(message[:envelope][:_routing_key]).to_sym
+      validate_message(message, metric)
       params = {
-          :metric => parse_metric(message[:envelope][:_routing_key]),
+          :metric => metric,
           :start_at => parse_start_at(message[:payload][:start_at]),
           :end_at => parse_end_at(message[:payload][:end_at]),
-          :site => message[:payload][:site]
+          :site => message[:payload][:value][:site]
       }
       weekly_visits = Model.first(params)
-      if message[:payload][:value].nil?
+      if message[:payload][:value][metric].nil?
         if weekly_visits
           weekly_visits.destroy
         end
       else
         if weekly_visits
-          weekly_visits.value = message[:payload][:value]
+          weekly_visits.value = message[:payload][:value][metric]
           weekly_visits.collected_at = message[:envelope][:collected_at]
           weekly_visits.save
         else
           Model.create(
-              :value => message[:payload][:value],
-              :metric => parse_metric(message[:envelope][:_routing_key]),
+              :value => message[:payload][:value][metric],
+              :metric => metric,
               :start_at => parse_start_at(message[:payload][:start_at]),
               :end_at => parse_end_at(message[:payload][:end_at]),
               :collected_at => DateTime.parse(message[:envelope][:collected_at]),
-              :site => message[:payload][:site]
+              :site => message[:payload][:value][:site]
           )
         end
       end
     end
 
     private
-    def validate_message(message)
+    def validate_message(message, metric)
       raise "No value provided in message payload: #{message.inspect}" unless message[:payload].has_key? :value
-      unless message[:payload][:value].nil? or message[:payload][:value].is_a? Integer
+      raise "No metric value provided in message payload: #{message.inspect} #{metric}" unless message[:payload][:value].has_key? metric
+      unless message[:payload][:value][metric].nil? or message[:payload][:value][metric].is_a? Integer
         raise "Invalid value provided in message payload: #{message.inspect}"
       end
     end
