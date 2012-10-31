@@ -21,12 +21,21 @@ end
 
 def create_json_response(metric)
   {
-    :govuk => convert_to_correct_format(WeeklyReach::Model.govuk(metric)),
-    :directgov => convert_to_correct_format(WeeklyReach::Model.directgov(metric)),
-    :businesslink => convert_to_correct_format(WeeklyReach::Model.businesslink(metric)),
+    :response_info => {:status => "ok"},
+    :id => "/format-success",
+    :web_url => "",
+    :details => {
+      :source => ["Google Analytics", "Celebrus", "Omniture"],
+      :data => {
+        :govuk => convert_to_correct_format(WeeklyReach::Model.govuk(metric)),
+        :directgov => convert_to_correct_format(WeeklyReach::Model.directgov(metric)),
+        :businesslink => convert_to_correct_format(WeeklyReach::Model.businesslink(metric)),
 
-    :highlight_spikes => WeeklyReach::Model.highlight_spikes(metric),
-    :highlight_troughs => WeeklyReach::Model.highlight_troughs(metric)
+        :highlight_spikes => WeeklyReach::Model.highlight_spikes(metric),
+        :highlight_troughs => WeeklyReach::Model.highlight_troughs(metric)
+      }
+    },
+    :updated_at => WeeklyReach::Model.updated_at(metric)
   }.to_json
 end
 

@@ -46,6 +46,10 @@ module WeeklyReach
       last_six_months_data("businesslink", metric)
     end
 
+    def self.updated_at(metric)
+      Model.max(:collected_at, :metric => metric)
+    end
+
     def self.median(data)
       return 0 if data.empty?
       mid, remainder = data.length.divmod(2)
