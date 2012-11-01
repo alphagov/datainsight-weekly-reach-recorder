@@ -40,22 +40,13 @@ describe "weekly-visitors" do
 
     data = response[:details][:data]
 
-    govuk = data[:govuk]
-    govuk.should have(27).items
-    govuk.first[:date].should == last_sunday_of(end_date_of_a_first_week).to_date.strftime
-    govuk.first[:value].should == 500
+    data.should have(27).items
+    data.first[:end_at].should == last_sunday_of(end_date_of_a_first_week).to_date.strftime
+    data.first[:value][:govuk].should == 500
+    data.first[:value][:directgov].should == 600
+    data.first[:value][:businesslink].should == 700
 
-    directgov = data[:directgov]
-    directgov.should have(27).items
-    directgov.first[:date].should == last_sunday_of(end_date_of_a_first_week).to_date.strftime
-    directgov.first[:value].should == 600
-
-    businesslink = data[:businesslink]
-    businesslink.should have(27).items
-    businesslink.first[:date].should == last_sunday_of(end_date_of_a_first_week).to_date.strftime
-    businesslink.first[:value].should == 700
-
-    data[:highlight_spikes].should == false
-    data[:highlight_troughs].should == false
+    response[:details][:highlight_spikes].should == false
+    response[:details][:highlight_troughs].should == false
   end
 end

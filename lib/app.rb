@@ -15,25 +15,16 @@ configure do
   end
 end
 
-def convert_to_correct_format(weekly_visits)
-  weekly_visits.map { |each| {"date" => each.week_ending, "value" => each.value} }
-end
-
 def create_json_response(metric)
-  {
+{
     :response_info => {:status => "ok"},
     :id => "/format-success",
     :web_url => "",
     :details => {
       :source => ["Google Analytics", "Celebrus", "Omniture"],
-      :data => {
-        :govuk => convert_to_correct_format(WeeklyReach::Model.govuk(metric)),
-        :directgov => convert_to_correct_format(WeeklyReach::Model.directgov(metric)),
-        :businesslink => convert_to_correct_format(WeeklyReach::Model.businesslink(metric)),
-
-        :highlight_spikes => WeeklyReach::Model.highlight_spikes(metric),
-        :highlight_troughs => WeeklyReach::Model.highlight_troughs(metric)
-      }
+      :highlight_spikes => WeeklyReach::Model.highlight_spikes(metric),
+      :highlight_troughs => WeeklyReach::Model.highlight_troughs(metric),
+      :data => WeeklyReach::Model.last_six_months_data(metric)
     },
     :updated_at => WeeklyReach::Model.updated_at(metric)
   }.to_json

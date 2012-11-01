@@ -21,29 +21,19 @@ module WeeklyReach
     validates_with_method :validate_value_positive, :if => lambda { |m| not m.value.nil? }
     validates_with_method :validate_week_length, :if => lambda { |m| (not m.start_at.nil?) and (not m.end_at.nil?) }
 
-    def week_ending
-      end_at
-    end
-
-    def self.last_six_months_data(site, metric)
+    def self.last_six_months_data(metric)
       past_six_months = (Date.today - 7) << 6
       Model.all(
         :metric => metric,
         :start_at.gte => past_six_months,
-        :site => site,
-        :order => [ :start_at.asc ])
-    end
-
-    def self.govuk(metric)
-      last_six_months_data("govuk", metric)
-    end
-
-    def self.directgov(metric)
-      last_six_months_data("directgov", metric)
-    end
-
-    def self.businesslink(metric)
-      last_six_months_data("businesslink", metric)
+        :order => [ :start_at.asc ]
+      ).group_by {|each| [each[:start_at], each[:end_at]] }.map {|(start_at, end_at), values|
+        {
+          :start_at => start_at,
+          :end_at => end_at,
+          :value => Hash[values.group_by(&:site).map {|site, value| [site.to_sym, value[0][:value]]}]
+        }
+      }
     end
 
     def self.updated_at(metric)
@@ -61,15 +51,19 @@ module WeeklyReach
     end
 
     HIGHLIGHT_SPIKES_THRESHOLD = 0.15
-    MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT = 0.1
 
+    # This controls switching the gradient off if the sites
+    # other than govuk have much higher values.
+    MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT = 0.1
     def self.should_show_gradient?(data, metric)
-      max_of_other_values = (directgov(metric).concat(businesslink(metric)).map { |each| each["value"] } << 0).max
-      data.max < (MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT * max_of_other_values)
+      max_of_businesslink_and_directgov = last_six_months_data(metric).map {|each|
+        [each[:value][:directgov] || 0, each[:value][:businesslink] || 0]
+      }.flatten.max
+      data.max < (MIN_PERCENTAGE_OF_GOV_UK_OF_ALL_VALUES_TO_HIGHLIGHT * max_of_businesslink_and_directgov)
     end
 
     def self.highlight_spikes(metric)
-      data = govuk(metric).map { |each| each["value"] }
+      data = last_six_months_data(metric).map { |each| each[:value][:govuk] || 0 }
       if data.empty?
         false
       elsif self.should_show_gradient?(data, metric)
@@ -80,7 +74,7 @@ module WeeklyReach
     end
 
     def self.highlight_troughs(metric)
-      data = govuk(metric).map { |each| each["value"] }
+      data = last_six_months_data(metric).map { |each| each[:value][:govuk] || 0 }
       if data.empty?
         false
       elsif self.should_show_gradient?(data, metric)

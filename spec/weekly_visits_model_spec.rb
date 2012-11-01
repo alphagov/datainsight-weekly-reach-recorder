@@ -36,11 +36,11 @@ describe "WeeklyVisits" do
         :site => "govuk"
     )
 
-    WeeklyReach::Model.govuk(:visits).length.should == 2
-    WeeklyReach::Model.govuk(:visits).map(&:value).reduce(&:+).should == 300
+    WeeklyReach::Model.last_six_months_data(:visits).length.should == 2
+    WeeklyReach::Model.last_six_months_data(:visits).map { |each| each[:value][:govuk] }.reduce(&:+).should == 300
   end
 
-  it "should return data for the past six months for govuk only" do
+  it "should return data for the past six months for mixed sites" do
     WeeklyReach::Model.create(
         :value => 100,
         :metric => "visits",
@@ -68,8 +68,9 @@ describe "WeeklyVisits" do
         :site => "govuk"
     )
 
-    WeeklyReach::Model.govuk(:visits).length.should == 1
-    WeeklyReach::Model.govuk(:visits).map(&:value).reduce(&:+).should == 200
+    WeeklyReach::Model.last_six_months_data(:visits).length.should == 2
+    WeeklyReach::Model.last_six_months_data(:visits).map { |each| each[:value][:govuk] || 0 }.reduce(&:+).should == 200
+    WeeklyReach::Model.last_six_months_data(:visits).map { |each| each[:value][:businesslink] || 0 }.reduce(&:+).should == 100
   end
 
   it "should calculate the median correctly" do
