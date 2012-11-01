@@ -58,23 +58,3 @@ Once you have recorded the latest Weekly Visits the web application which
 exposes that information can be started.
 
     bundle exec rackup
-
-This starts a web application which exposes one URL at /weekly_visits which
-returns a JSON document of the following format:
-
-    {"govuk":[
-        {
-            "date":"2012-08-06",
-            "value":0
-        }
-    ], "directgov":[
-        {
-            "date":"2012-08-06",
-            "value":0
-        }
-    ], "businesslink":[
-        {
-            "date":"2012-08-06",
-            "value":0
-        }
-    ], "highlight_spikes":false, "highlight_troughs":false}

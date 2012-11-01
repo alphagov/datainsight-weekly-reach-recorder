@@ -45,8 +45,5 @@ describe "weekly-visitors" do
     data.first[:value][:govuk].should == 500
     data.first[:value][:directgov].should == 600
     data.first[:value][:businesslink].should == 700
-
-    response[:details][:highlight_spikes].should == false
-    response[:details][:highlight_troughs].should == false
   end
 end

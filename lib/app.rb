@@ -22,8 +22,6 @@ def create_json_response(metric)
     :web_url => "",
     :details => {
       :source => ["Google Analytics", "Celebrus", "Omniture"],
-      :highlight_spikes => WeeklyReach::Model.highlight_spikes(metric),
-      :highlight_troughs => WeeklyReach::Model.highlight_troughs(metric),
       :data => WeeklyReach::Model.last_six_months_data(metric)
     },
     :updated_at => WeeklyReach::Model.updated_at(metric)
