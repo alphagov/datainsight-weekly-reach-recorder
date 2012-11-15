@@ -17,18 +17,22 @@ QUEUE environment variable.
 
 The expected format from the collector is:
 
-    {
-      "envelope":{
-        "collected_at":"2012-07-31T10:46:25+01:00",
-        "collector":"weekly_visits"
-       },
-       "payload":{
-           :value => 0,
-           :week_starting => "2012-08-06",
-           :site => "govuk"
-       }
+```ruby
+{
+  :envelope => {
+    :collected_at => "2012-07-31T10:46:25+01:00",
+    :collector => "Google Analytics"
+  },
+  :payload => {
+    :start_at => "2012-07-31T00:00:00+00:00",
+    :end_at => "2012-08-07T00:00:00+00:00",
+    :value => {
+      :visits => 700,
+      :site => "directgov"
     }
-
+  }
+}
+```
 
 ## Dependencies
 
