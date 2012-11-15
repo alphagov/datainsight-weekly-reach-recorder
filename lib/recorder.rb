@@ -38,10 +38,13 @@ module WeeklyReach
         end
       else
         if weekly_visits
+          logger.info("SAVE EXISTING")
           weekly_visits.value = message[:payload][:value][metric]
+          weekly_visits.source = message[:envelope][:collector] # to get around migration
           weekly_visits.collected_at = message[:envelope][:collected_at]
           weekly_visits.save
         else
+          logger.info("CREATE NEW")
           Model.create(
               :value => message[:payload][:value][metric],
               :metric => metric,
@@ -49,7 +52,7 @@ module WeeklyReach
               :end_at => parse_end_at(message[:payload][:end_at]),
               :collected_at => DateTime.parse(message[:envelope][:collected_at]),
               :site => message[:payload][:value][:site],
-              :collector => message[:envelope][:collector]
+              :source => message[:envelope][:collector]
           )
         end
       end

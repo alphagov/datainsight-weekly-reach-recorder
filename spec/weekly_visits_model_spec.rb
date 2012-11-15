@@ -16,7 +16,7 @@ describe "WeeklyVisits" do
         :end_at => Date.today + 6,
         :collected_at => DateTime.now,
         :site => "govuk",
-        :collector => "Google Analytics"
+        :source => "Google Analytics"
     )
 
     WeeklyReach::Model.create(
@@ -26,7 +26,7 @@ describe "WeeklyVisits" do
         :end_at => (Date.today << 12) + 6,
         :collected_at => DateTime.now,
         :site => "govuk",
-        :collector => "Google Analytics"
+        :source => "Google Analytics"
     )
 
     WeeklyReach::Model.create(
@@ -36,7 +36,7 @@ describe "WeeklyVisits" do
         :end_at => (Date.today << 6) + 6,
         :collected_at => DateTime.now,
         :site => "govuk",
-        :collector => "Google Analytics"
+        :source => "Google Analytics"
     )
 
     WeeklyReach::Model.last_six_months_data(:visits).length.should == 2
@@ -51,7 +51,7 @@ describe "WeeklyVisits" do
         :end_at => Date.today + 6,
         :collected_at => DateTime.now,
         :site => "businesslink",
-        :collector => "Google Analytics"
+        :source => "Google Analytics"
     )
 
     WeeklyReach::Model.create(
@@ -61,7 +61,7 @@ describe "WeeklyVisits" do
         :end_at => (Date.today << 12) + 6,
         :collected_at => DateTime.now,
         :site => "govuk",
-        :collector => "Google Analytics"
+        :source => "Google Analytics"
     )
 
     WeeklyReach::Model.create(
@@ -71,7 +71,7 @@ describe "WeeklyVisits" do
         :end_at => (Date.today << 6) + 6,
         :collected_at => DateTime.now,
         :site => "govuk",
-        :collector => "Google Analytics"
+        :source => "Google Analytics"
     )
 
     WeeklyReach::Model.last_six_months_data(:visits).length.should == 2
