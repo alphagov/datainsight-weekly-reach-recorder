@@ -48,7 +48,8 @@ module WeeklyReach
               :start_at => parse_start_at(message[:payload][:start_at]),
               :end_at => parse_end_at(message[:payload][:end_at]),
               :collected_at => DateTime.parse(message[:envelope][:collected_at]),
-              :site => message[:payload][:value][:site]
+              :site => message[:payload][:value][:site],
+              :collector => message[:envelope][:collector]
           )
         end
       end
