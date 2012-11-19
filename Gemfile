@@ -1,8 +1,9 @@
 source "https://rubygems.org"
 source 'https://gems.gemfury.com/vo6ZrmjBQu5szyywDszE/'
 
+gem "data_mapper", "1.2.0"
+gem "dm-mysql-adapter", "1.2.0"
 gem "rake"
-gem "datainsight_recorder", "0.0.2"
 gem "datainsight_logging"
 
 group :exposer do
@@ -16,6 +17,7 @@ group :recorder do
 end
 
 group :test do
+  gem "dm-sqlite-adapter", "1.2.0"
   gem "rspec"
   gem "rack-test"
   gem "ci_reporter"
