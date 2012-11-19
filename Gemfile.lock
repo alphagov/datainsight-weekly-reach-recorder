@@ -21,10 +21,15 @@ GEM
       dm-transactions (~> 1.2.0)
       dm-types (~> 1.2.0)
       dm-validations (~> 1.2.0)
-    data_objects (0.10.8)
+    data_objects (0.10.10)
       addressable (~> 2.1)
     datainsight_logging (0.0.2)
       logging
+    datainsight_recorder (0.0.2)
+      bunny
+      data_mapper (= 1.2.0)
+      datainsight_logging
+      dm-mysql-adapter (= 1.2.0)
     diff-lcs (1.1.3)
     dm-aggregates (1.2.0)
       dm-core (~> 1.2.0)
@@ -46,9 +51,6 @@ GEM
       json (~> 1.6)
       json_pure (~> 1.6)
       multi_json (~> 1.0)
-    dm-sqlite-adapter (1.2.0)
-      dm-do-adapter (~> 1.2.0)
-      do_sqlite3 (~> 0.10.6)
     dm-timestamps (1.2.0)
       dm-core (~> 1.2.0)
     dm-transactions (1.2.0)
@@ -63,10 +65,8 @@ GEM
       uuidtools (~> 2.1)
     dm-validations (1.2.0)
       dm-core (~> 1.2.0)
-    do_mysql (0.10.8)
-      data_objects (= 0.10.8)
-    do_sqlite3 (0.10.8)
-      data_objects (= 0.10.8)
+    do_mysql (0.10.10)
+      data_objects (= 0.10.10)
     factory_girl (4.0.0)
       activesupport (>= 3.0.0)
     fastercsv (1.5.5)
@@ -113,10 +113,8 @@ PLATFORMS
 DEPENDENCIES
   bunny
   ci_reporter
-  data_mapper (= 1.2.0)
   datainsight_logging
-  dm-mysql-adapter (= 1.2.0)
-  dm-sqlite-adapter (= 1.2.0)
+  datainsight_recorder (= 0.0.2)
   factory_girl
   gli (= 1.6.0)
   rack-test

@@ -9,6 +9,7 @@ FactoryGirl.define do
     metric "visits"
     site "govuk"
     collected_at DateTime.now
+    source "Google Analytics"
   end
 
   factory :visits_model, parent: :model do
