@@ -7,7 +7,7 @@ describe "WeeklyVisitsRecorder" do
     @message = {
         :envelope => {
             :collected_at => DateTime.now.strftime,
-            :collector => "visits",
+            :collector    => "Google Analytics",
             :_routing_key => "google_analytics.visits.weekly"
         },
         :payload => {

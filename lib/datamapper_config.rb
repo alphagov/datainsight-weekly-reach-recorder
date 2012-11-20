@@ -1,35 +1,17 @@
-require 'dm-constraints'
-require 'dm-migrations'
+require "datainsight_recorder/datamapper_config"
 
 module DataMapperConfig
-  def self.configure(env=ENV["RACK_ENV"])
-    DataMapper.logger = Logging.logger[DataMapper]
-    case (env or "default").to_sym
-      when :test
-        DataMapperConfig.configure_test
-      when :production
-        DataMapperConfig.configure_production
-      else
-        DataMapperConfig.configure_development
-    end
-    DataMapper::Model.raise_on_save_failure = true
+  extend DataInsight::Recorder::DataMapperConfig
+
+  def self.development_uri
+    'mysql://root:@localhost/datainsight_weekly_reach'
   end
 
-  def self.configure_development
-    DataMapper.setup(:default, 'mysql://root:@localhost/datainsight_weekly_reach')
-    DataMapper.finalize
-    DataMapper.auto_upgrade!
+  def self.production_uri
+    'mysql://datainsight:@localhost/datainsight_weekly_reach'
   end
 
-  def self.configure_production
-    DataMapper.setup(:default, 'mysql://datainsight:@localhost/datainsight_weekly_reach')
-    DataMapper.finalize
-    DataMapper.auto_upgrade!
-  end
-
-  def self.configure_test
-    DataMapper.setup(:default, 'sqlite::memory:')
-    DataMapper.finalize
-    DataMapper.auto_upgrade!
+  def self.test_uri
+    'mysql://datainsight:@localhost/datainsight_weekly_reach_test'
   end
 end
