@@ -5,10 +5,7 @@ Bundler.require
 
 require_relative '../lib/recorder'
 require_relative '../lib/datamapper_config'
-
-Dir.glob(File.absolute_path("#{File.dirname(__FILE__)}/../config/initializers/*.rb")).each do |initializer|
-  require_relative initializer
-end
+require_relative "../lib/initializers"
 
 include GLI
 

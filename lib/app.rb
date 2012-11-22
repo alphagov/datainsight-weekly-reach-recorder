@@ -4,10 +4,7 @@ Bundler.require(:default, :exposer)
 
 require_relative 'model'
 require_relative 'datamapper_config'
-
-Dir.glob(File.absolute_path("#{File.dirname(__FILE__)}/../config/initializers/*.rb")).each do |initializer|
-  require_relative initializer
-end
+require_relative "initializers"
 
 helpers Datainsight::Logging::Helpers
 
