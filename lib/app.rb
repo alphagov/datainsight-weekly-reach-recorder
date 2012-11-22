@@ -5,7 +5,14 @@ Bundler.require(:default, :exposer)
 require_relative 'model'
 require_relative 'datamapper_config'
 
+Dir.glob(File.absolute_path("#{File.dirname(__FILE__)}/../config/initializers/*.rb")).each do |initializer|
+  require_relative initializer
+end
+
 helpers Datainsight::Logging::Helpers
+
+use Airbrake::Rack
+enable :raise_errors
 
 configure do
   enable :logging
