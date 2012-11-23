@@ -19,10 +19,10 @@ configure do
   end
 end
 
-def create_json_response(metric)
+def create_json_response(metric, id)
 {
     :response_info => {:status => "ok"},
-    :id => "/format-success",
+    :id => id,
     :web_url => "",
     :details => {
       :source => ["Google Analytics", "Celebrus", "Omniture"],
@@ -34,12 +34,12 @@ end
 
 get '/weekly-visits' do
   content_type :json
-  create_json_response(:visits)
+  create_json_response(:visits, request.path_info)
 end
 
 get '/weekly-visitors' do
   content_type :json
-  create_json_response(:visitors)
+  create_json_response(:visitors, request.path_info)
 end
 
 error do
