@@ -23,6 +23,7 @@ command :run do |c|
       WeeklyReach::Recorder.new.run
     rescue Exception => e
       Airbrake.notify(e)
+      raise e
     end
   end
 end
