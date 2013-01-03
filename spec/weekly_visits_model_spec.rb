@@ -8,75 +8,89 @@ describe "WeeklyVisits" do
     WeeklyReach::Model.destroy
   end
 
-  it "should return data for the past six months" do
-    WeeklyReach::Model.create(
-        :value => 100,
-        :metric => "visits",
-        :start_at => Date.today,
-        :end_at => Date.today + 7,
-        :collected_at => DateTime.now,
-        :site => "govuk",
-        :source => "Google Analytics"
-    )
+  describe "last_six_months_data" do
 
-    WeeklyReach::Model.create(
-        :value => 400,
-        :metric => "visits",
-        :start_at => Date.today << 12,
-        :end_at => (Date.today << 12) + 7,
-        :collected_at => DateTime.now,
-        :site => "govuk",
-        :source => "Google Analytics"
-    )
+    it "should return data for the past six months" do
+      WeeklyReach::Model.create(
+          :value => 100,
+          :metric => "visits",
+          :start_at => DateTime.new(2012, 12, 23), # Sunday
+          :end_at => DateTime.new(2012, 12, 30), # Sunday + 7 days
+          :collected_at => DateTime.now,
+          :site => "govuk",
+          :source => "Google Analytics"
+      )
 
-    WeeklyReach::Model.create(
-        :value => 200,
-        :metric => "visits",
-        :start_at => Date.today << 6,
-        :end_at => (Date.today << 6) + 7,
-        :collected_at => DateTime.now,
-        :site => "govuk",
-        :source => "Google Analytics"
-    )
+      WeeklyReach::Model.create(
+          :value => 400,
+          :metric => "visits",
+          :start_at => DateTime.new(2012, 1, 22), # Sunday 12 months ago
+          :end_at => DateTime.new(2012, 1, 29), # (Sunday 12 months ago) + 7 days
+          :collected_at => DateTime.now,
+          :site => "govuk",
+          :source => "Google Analytics"
+      )
 
-    WeeklyReach::Model.last_six_months_data(:visits).length.should == 2
-    WeeklyReach::Model.last_six_months_data(:visits).map { |each| each[:value][:govuk] }.reduce(&:+).should == 300
-  end
+      WeeklyReach::Model.create(
+          :value => 200,
+          :metric => "visits",
+          :start_at => DateTime.new(2012, 7, 1), # Sunday 6 months ago
+          :end_at => DateTime.new(2012, 7, 8), # Sunday 6 months ago + 7 days
+          :collected_at => DateTime.now,
+          :site => "govuk",
+          :source => "Google Analytics"
+      )
 
-  it "should return data for the past six months for mixed sites" do
-    WeeklyReach::Model.create(
-        :value => 100,
-        :metric => "visits",
-        :start_at => Date.today,
-        :end_at => Date.today + 7,
-        :collected_at => DateTime.now,
-        :site => "businesslink",
-        :source => "Google Analytics"
-    )
+      Timecop.travel(DateTime.new(2013, 1, 5)) do
+        data = WeeklyReach::Model.last_six_months_data(:visits)
+        data.length.should == 2
+        data.first[:start_at].should == Date.new(2012, 7, 1)
+        data.first[:end_at].should == Date.new(2012, 7, 7)
+        data.first[:value][:govuk].should == 200
+        data.last[:start_at].should == Date.new(2012, 12, 23)
+        data.last[:end_at].should == Date.new(2012, 12, 29)
+        data.last[:value][:govuk].should == 100
+      end
+    end
 
-    WeeklyReach::Model.create(
-        :value => 400,
-        :metric => "visits",
-        :start_at => Date.today << 12,
-        :end_at => (Date.today << 12) + 7,
-        :collected_at => DateTime.now,
-        :site => "govuk",
-        :source => "Google Analytics"
-    )
+    it "should return data for the past six months for mixed sites" do
+      WeeklyReach::Model.create(
+          :value => 100,
+          :metric => "visits",
+          :start_at => DateTime.new(2012, 12, 24), # Monday
+          :end_at => DateTime.new(2012, 12, 31), # Monday + 7 days
+          :collected_at => DateTime.now,
+          :site => "businesslink",
+          :source => "Google Analytics"
+      )
 
-    WeeklyReach::Model.create(
-        :value => 200,
-        :metric => "visits",
-        :start_at => Date.today << 6,
-        :end_at => (Date.today << 6) + 7,
-        :collected_at => DateTime.now,
-        :site => "govuk",
-        :source => "Google Analytics"
-    )
+      WeeklyReach::Model.create(
+          :value => 400,
+          :metric => "visits",
+          :start_at => DateTime.new(2012, 1, 22), # Sunday 12 months ago
+          :end_at => DateTime.new(2012, 1, 29), # (Sunday 12 months ago) + 7 days
+          :collected_at => DateTime.now,
+          :site => "govuk",
+          :source => "Google Analytics"
+      )
 
-    WeeklyReach::Model.last_six_months_data(:visits).length.should == 2
-    WeeklyReach::Model.last_six_months_data(:visits).map { |each| each[:value][:govuk] || 0 }.reduce(&:+).should == 200
-    WeeklyReach::Model.last_six_months_data(:visits).map { |each| each[:value][:businesslink] || 0 }.reduce(&:+).should == 100
+      WeeklyReach::Model.create(
+          :value => 200,
+          :metric => "visits",
+          :start_at => DateTime.new(2012, 7, 1), # Sunday 6 months ago
+          :end_at => DateTime.new(2012, 7, 8), # Sunday 6 months ago + 7 days
+          :collected_at => DateTime.now,
+          :site => "govuk",
+          :source => "Google Analytics"
+      )
+
+      Timecop.travel(DateTime.new(2013, 1, 5)) do      
+        data = WeeklyReach::Model.last_six_months_data(:visits)
+        data.length.should == 2
+        data.first[:value][:govuk].should == 200
+        data.last[:value][:businesslink].should == 100
+      end
+    end
   end
 
   describe "validates start and end at" do

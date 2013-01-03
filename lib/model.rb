@@ -30,7 +30,7 @@ module WeeklyReach
       ).group_by {|each| [each[:start_at], each[:end_at]] }.map {|(start_at, end_at), values|
         {
           :start_at => start_at.to_date,
-          :end_at => end_at.to_date,
+          :end_at => (end_at-1).to_date,
           :value => Hash[values.group_by(&:site).map {|site, value| [site.to_sym, value[0][:value]]}]
         }
       }
