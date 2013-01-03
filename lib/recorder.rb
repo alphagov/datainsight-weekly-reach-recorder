@@ -28,7 +28,7 @@ module WeeklyReach
       params = {
           :metric => metric,
           :start_at => parse_start_at(message[:payload][:start_at]),
-          :end_at => parse_end_at(message[:payload][:end_at]),
+          :end_at => DateTime.parse(message[:payload][:end_at]),
           :site => message[:payload][:value][:site]
       }
       weekly_visits = Model.first(params)
@@ -49,7 +49,7 @@ module WeeklyReach
               :value => message[:payload][:value][metric],
               :metric => metric,
               :start_at => parse_start_at(message[:payload][:start_at]),
-              :end_at => parse_end_at(message[:payload][:end_at]),
+              :end_at => DateTime.parse(message[:payload][:end_at]),
               :collected_at => DateTime.parse(message[:envelope][:collected_at]),
               :site => message[:payload][:value][:site],
               :source => message[:envelope][:collector]

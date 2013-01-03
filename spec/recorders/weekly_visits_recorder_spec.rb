@@ -33,8 +33,8 @@ describe "WeeklyVisitsRecorder" do
     item = WeeklyReach::Model.first
     item.metric.should == "visits"
     item.value.should == 700
-    item.start_at.should == Date.new(2011, 3, 28)
-    item.end_at.should == Date.new(2011, 4, 3)
+    item.start_at.should == DateTime.new(2011, 3, 28)
+    item.end_at.should == DateTime.new(2011, 4, 4)
     item.site.should == "directgov"
   end
 
@@ -43,7 +43,7 @@ describe "WeeklyVisitsRecorder" do
         site: "directgov",
         metric: "visits",
         start_at: DateTime.parse("2011-03-28T00:00:00"),
-        end_at: DateTime.parse("2011-04-03T00:00:00"),
+        end_at: DateTime.parse("2011-04-04T00:00:00"),
         value: 700
     )
     @message[:payload][:value][:visits] = nil
@@ -60,8 +60,8 @@ describe "WeeklyVisitsRecorder" do
     item = WeeklyReach::Model.first
     item.metric.should == "visits"
     item.value.should == 700
-    item.start_at.should == Date.new(2011, 3, 28)
-    item.end_at.should == Date.new(2011, 4, 3)
+    item.start_at.should == DateTime.new(2011, 3, 28)
+    item.end_at.should == DateTime.new(2011, 4, 4)
     item.site.should == "govuk"
   end
 
@@ -70,7 +70,7 @@ describe "WeeklyVisitsRecorder" do
     @message[:payload][:end_at] = "2011-09-01T00:00:00"
     @recorder.process_message(@message)
     item = WeeklyReach::Model.first
-    item.end_at.should == Date.new(2011, 8, 31)
+    item.end_at.should == DateTime.new(2011, 9, 1)
   end
 
   it "should store visitors metric" do

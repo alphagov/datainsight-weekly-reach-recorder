@@ -13,7 +13,7 @@ describe "WeeklyVisits" do
         :value => 100,
         :metric => "visits",
         :start_at => Date.today,
-        :end_at => Date.today + 6,
+        :end_at => Date.today + 7,
         :collected_at => DateTime.now,
         :site => "govuk",
         :source => "Google Analytics"
@@ -23,7 +23,7 @@ describe "WeeklyVisits" do
         :value => 400,
         :metric => "visits",
         :start_at => Date.today << 12,
-        :end_at => (Date.today << 12) + 6,
+        :end_at => (Date.today << 12) + 7,
         :collected_at => DateTime.now,
         :site => "govuk",
         :source => "Google Analytics"
@@ -33,7 +33,7 @@ describe "WeeklyVisits" do
         :value => 200,
         :metric => "visits",
         :start_at => Date.today << 6,
-        :end_at => (Date.today << 6) + 6,
+        :end_at => (Date.today << 6) + 7,
         :collected_at => DateTime.now,
         :site => "govuk",
         :source => "Google Analytics"
@@ -48,7 +48,7 @@ describe "WeeklyVisits" do
         :value => 100,
         :metric => "visits",
         :start_at => Date.today,
-        :end_at => Date.today + 6,
+        :end_at => Date.today + 7,
         :collected_at => DateTime.now,
         :site => "businesslink",
         :source => "Google Analytics"
@@ -58,7 +58,7 @@ describe "WeeklyVisits" do
         :value => 400,
         :metric => "visits",
         :start_at => Date.today << 12,
-        :end_at => (Date.today << 12) + 6,
+        :end_at => (Date.today << 12) + 7,
         :collected_at => DateTime.now,
         :site => "govuk",
         :source => "Google Analytics"
@@ -68,7 +68,7 @@ describe "WeeklyVisits" do
         :value => 200,
         :metric => "visits",
         :start_at => Date.today << 6,
-        :end_at => (Date.today << 6) + 6,
+        :end_at => (Date.today << 6) + 7,
         :collected_at => DateTime.now,
         :site => "govuk",
         :source => "Google Analytics"
@@ -82,8 +82,8 @@ describe "WeeklyVisits" do
   describe "validates start and end at" do
     it "should be valid data if data is ok" do
       model = FactoryGirl.create(:model, {
-          :start_at => Date.parse("2012-08-12"),
-          :end_at => Date.parse("2012-08-18"),
+          :start_at => DateTime.parse("2012-08-12T00:00:00"),
+          :end_at => DateTime.parse("2012-08-19T00:00:00"),
       })
 
       model.should be_valid
@@ -91,8 +91,8 @@ describe "WeeklyVisits" do
 
     it "should not be valid if there are 6 days between start at and end at" do
       model = FactoryGirl.create(:model, {
-          :start_at => Date.parse("2012-08-12"),
-          :end_at => Date.parse("2012-08-17"),
+          :start_at => DateTime.parse("2012-08-12T00:00:00"),
+          :end_at => DateTime.parse("2012-08-18T00:00:00"),
       })
 
       model.should_not be_valid
@@ -100,8 +100,8 @@ describe "WeeklyVisits" do
 
     it "should not be valid if there are 8 days between start at and end at" do
       model = FactoryGirl.create(:model, {
-          :start_at => Date.parse("2012-08-12"),
-          :end_at => Date.parse("2012-08-19"),
+          :start_at => DateTime.parse("2012-08-12T00:00:00"),
+          :end_at => DateTime.parse("2012-08-20T00:00:00"),
       })
 
       model.should_not be_valid
