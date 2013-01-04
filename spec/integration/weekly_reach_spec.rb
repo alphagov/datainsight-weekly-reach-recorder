@@ -21,9 +21,9 @@ describe "weekly-visitors" do
   end
 
   it "should return JSON data for weekly visitors" do
-    start_at ||= last_sunday_of(DateTime.now << 6)
-    end_at ||= last_sunday_of(DateTime.now)
-    end_date_of_a_first_week = (DateTime.now << 6) + 7
+    start_at = last_sunday_of(Date.today << 6).to_datetime
+    end_at = last_sunday_of(Date.today).to_datetime
+    end_date_of_a_first_week = (Date.today << 6).to_datetime + 7
 
     create_measurements(start_at, end_at, metric: "visitors", value: 500, site: "govuk")
     create_measurements(start_at, end_at, metric: "visitors", value: 600, site: "directgov")
@@ -41,7 +41,8 @@ describe "weekly-visitors" do
     data = response[:details][:data]
 
     data.should have(27).items
-    data.first[:end_at].should == last_sunday_of(end_date_of_a_first_week).to_date.strftime
+    data.first[:start_at].should == start_at.to_date.strftime
+    data.first[:end_at].should == (start_at + 6).to_date.strftime
     data.first[:value][:govuk].should == 500
     data.first[:value][:directgov].should == 600
     data.first[:value][:businesslink].should == 700
