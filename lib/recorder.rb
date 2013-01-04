@@ -27,7 +27,7 @@ module WeeklyReach
       validate_message(message, metric)
       params = {
           :metric => metric,
-          :start_at => parse_start_at(message[:payload][:start_at]),
+          :start_at => DateTime.parse(message[:payload][:start_at]),
           :end_at => DateTime.parse(message[:payload][:end_at]),
           :site => message[:payload][:value][:site]
       }
@@ -48,7 +48,7 @@ module WeeklyReach
           Model.create(
               :value => message[:payload][:value][metric],
               :metric => metric,
-              :start_at => parse_start_at(message[:payload][:start_at]),
+              :start_at => DateTime.parse(message[:payload][:start_at]),
               :end_at => DateTime.parse(message[:payload][:end_at]),
               :collected_at => DateTime.parse(message[:envelope][:collected_at]),
               :site => message[:payload][:value][:site],
@@ -94,22 +94,5 @@ module WeeklyReach
     def parse_metric(routing_key)
       /\.(?<metric>visits|visitors)\.weekly$/.match(routing_key)[:metric] or raise "Invalid metric for key [#{routing_key}] "
     end
-
-    def parse_start_at(start_at)
-      DateTime.parse(start_at)
-    end
-
-    # This recorder stores start and end as dates while the message format uses date times on date boundaries (midnight).
-    # This means that the date may have to be shifted back
-    def parse_end_at(end_at)
-      end_at = DateTime.parse(end_at)
-      if (end_at.hour + end_at.minute + end_at.second) == 0
-        # up to midnight, so including the previous day
-        end_at - 1
-      else
-        end_at
-      end
-    end
-
   end
 end
