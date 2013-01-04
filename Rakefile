@@ -7,9 +7,11 @@ task :environment do
   DataMapperConfig.configure
 end
 
-RSpec::Core::RakeTask.new do |task|
-  task.pattern = 'spec/**/*_spec.rb'
-  task.rspec_opts = ["--format documentation"]
+unless [ENV["RACK_ENV"], ENV["RAILS_ENV"]].include? "production"
+  RSpec::Core::RakeTask.new do |task|
+    task.pattern = 'spec/**/*_spec.rb'
+    task.rspec_opts = ["--format documentation"]
+  end
 end
 
 namespace :db do
