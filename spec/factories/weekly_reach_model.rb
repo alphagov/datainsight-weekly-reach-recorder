@@ -3,8 +3,8 @@ require_relative "../../lib/model"
 
 FactoryGirl.define do
   factory :model, class: WeeklyReach::Model do
-    start_at Date.parse("2012-08-06")
-    end_at Date.parse("2012-08-12")
+    start_at DateTime.parse("2012-08-06T00:00:00")
+    end_at DateTime.parse("2012-08-13T00:00:00")
     value 500
     metric "visits"
     site "govuk"
