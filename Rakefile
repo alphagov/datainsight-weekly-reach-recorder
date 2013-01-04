@@ -1,6 +1,4 @@
 require 'rubygems'
-require 'rspec/core/rake_task'
-require 'ci/reporter/rake/rspec'
 require_relative "lib/datamapper_config"
 
 task :environment do
@@ -8,6 +6,9 @@ task :environment do
 end
 
 unless [ENV["RACK_ENV"], ENV["RAILS_ENV"]].include? "production"
+  require 'rspec/core/rake_task'
+  require 'ci/reporter/rake/rspec'
+
   RSpec::Core::RakeTask.new do |task|
     task.pattern = 'spec/**/*_spec.rb'
     task.rspec_opts = ["--format documentation"]
