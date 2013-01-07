@@ -8,6 +8,58 @@ describe "WeeklyVisits" do
     WeeklyReach::Model.destroy
   end
 
+  describe "update from message" do
+    before(:each) do
+      @message = {
+          :envelope => {
+              :collected_at => "2012-12-12T00:00:00",
+              :collector    => "Google Analytics",
+              :_routing_key => "google_analytics.visits.weekly"
+          },
+          :payload => {
+              :start_at => "2011-03-28T00:00:00",
+              :end_at => "2011-04-04T00:00:00",
+              :value => {
+                :visits => 700,
+                :site => "directgov"
+              }
+          }
+      }
+    end
+
+    it "should insert a new record" do
+      WeeklyReach::Model.update_from_message(@message)
+
+      records = WeeklyReach::Model.all
+
+      records.should have(1).item
+
+      records.first.collected_at.should == DateTime.new(2012, 12, 12)
+      records.first.source.should == "Google Analytics"
+      records.first.start_at.should == DateTime.new(2011, 3, 28)
+      records.first.end_at.should == DateTime.new(2011, 4, 4)
+      records.first.site.should == "directgov"
+      records.first.value.should == 700
+    end
+
+    it "should update an existing record" do
+      WeeklyReach::Model.update_from_message(@message)
+      @message[:payload][:value][:visits] = 800
+      WeeklyReach::Model.update_from_message(@message)
+
+      records = WeeklyReach::Model.all
+
+      records.should have(1).item
+
+      records.first.collected_at.should == DateTime.new(2012, 12, 12)
+      records.first.source.should == "Google Analytics"
+      records.first.start_at.should == DateTime.new(2011, 3, 28)
+      records.first.end_at.should == DateTime.new(2011, 4, 4)
+      records.first.site.should == "directgov"
+      records.first.value.should == 800
+    end
+  end
+
   describe "last_six_months_data" do
 
     it "should return data for the past six months" do

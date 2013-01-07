@@ -21,6 +21,23 @@ module WeeklyReach
     validates_with_method :validate_value
     validates_with_method :validate_time_series_week
 
+    def self.update_from_message(message)
+      metric = parse_metric(message[:envelope][:_routing_key]).to_sym
+      query = {
+        :metric => metric,
+        :start_at => DateTime.parse(message[:payload][:start_at]),
+        :end_at => DateTime.parse(message[:payload][:end_at]),
+        :site => message[:payload][:value][:site]
+      }
+      record = Model.first(query)
+      record = Model.new(query) unless record
+
+      record.collected_at = DateTime.parse(message[:envelope][:collected_at])
+      record.source = message[:envelope][:collector]
+      record.value = message[:payload][:value][metric]
+      record.save
+    end
+
     def self.last_six_months_data(metric)
       past_six_months = (Date.today - 7) << 6
       Model.all(
@@ -42,6 +59,9 @@ module WeeklyReach
 
 
     private
+    def self.parse_metric(routing_key)
+      /\.(?<metric>visits|visitors)\.weekly$/.match(routing_key)[:metric] or raise "Invalid metric for key [#{routing_key}] "
+    end
 
     def validate_value
       if value.nil? || value >= 0

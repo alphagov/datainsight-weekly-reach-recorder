@@ -27,7 +27,7 @@ describe "WeeklyVisitsRecorder" do
   end
 
   it "should store weekly visits when processing drive message" do
-    @recorder.process_message(@message)
+    @recorder.update_message(@message)
 
     WeeklyReach::Model.all.should_not be_empty
     item = WeeklyReach::Model.first
@@ -38,23 +38,9 @@ describe "WeeklyVisitsRecorder" do
     item.site.should == "directgov"
   end
 
-  it "should delete the record when processing a nil drive message" do
-    FactoryGirl.create(:model,
-        site: "directgov",
-        metric: "visits",
-        start_at: DateTime.parse("2011-03-28T00:00:00"),
-        end_at: DateTime.parse("2011-04-04T00:00:00"),
-        value: 700
-    )
-    @message[:payload][:value][:visits] = nil
-    @recorder.process_message(@message)
-
-    WeeklyReach::Model.all.should be_empty
-  end
-
   it "should store weekly data when processing analytics message" do
     @message[:payload][:value][:site] = "govuk"
-    @recorder.process_message(@message)
+    @recorder.update_message(@message)
 
     WeeklyReach::Model.all.should_not be_empty
     item = WeeklyReach::Model.first
@@ -68,7 +54,7 @@ describe "WeeklyVisitsRecorder" do
   it "should correctly handle end date over month boundaries" do
     @message[:payload][:start_at] = "2011-08-25T00:00:00"
     @message[:payload][:end_at] = "2011-09-01T00:00:00"
-    @recorder.process_message(@message)
+    @recorder.update_message(@message)
     item = WeeklyReach::Model.first
     item.end_at.should == DateTime.new(2011, 9, 1)
   end
@@ -76,7 +62,7 @@ describe "WeeklyVisitsRecorder" do
   it "should store visitors metric" do
     @message[:envelope][:_routing_key] = "google_analytics.visitors.weekly"
     @message[:payload][:value][:visitors] = @message[:payload][:value].delete(:visits)
-    @recorder.process_message(@message)
+    @recorder.update_message(@message)
     item = WeeklyReach::Model.first
     item.metric.should == "visitors"
   end
@@ -84,21 +70,21 @@ describe "WeeklyVisitsRecorder" do
   it "should raise an error if an invalid metric is parsed" do
     @message[:envelope][:_routing_key] = "google_analytics.invalid.weekly"
     lambda do
-      @recorder.process_message(@message)
+      @recorder.update_message(@message)
     end.should raise_error
   end
 
   it "should raise an error with invalid week on insert" do
     @message[:payload][:start_at] = "2011-03-29T00:00:00" #to short week
     lambda do
-      @recorder.process_message(@message)
+      @recorder.update_message(@message)
     end.should raise_error
   end
 
   it "should update existing measurements" do
-    @recorder.process_message(@message)
+    @recorder.update_message(@message)
     @message[:payload][:value][:visits] = 900
-    @recorder.process_message(@message)
+    @recorder.update_message(@message)
     WeeklyReach::Model.all.length.should == 1
     WeeklyReach::Model.first.value.should == 900
   end
@@ -108,7 +94,7 @@ describe "WeeklyVisitsRecorder" do
       @message[:payload].delete(:value)
 
       lambda do
-        @recorder.process_message(@message)
+        @recorder.update_message(@message)
       end.should raise_error
     end
 
@@ -116,16 +102,16 @@ describe "WeeklyVisitsRecorder" do
       @message[:payload][:value] = "invalid"
 
       lambda do
-        @recorder.process_message(@message)
+        @recorder.update_message(@message)
       end.should raise_error
     end
 
-    it "should allow nil as a value" do
+    it "should not allow nil as a value" do
       @message[:payload][:value][:visits] = nil
 
       lambda do
-        @recorder.process_message(@message)
-      end.should_not raise_error
+        @recorder.update_message(@message)
+      end.should raise_error
     end
 
   end
