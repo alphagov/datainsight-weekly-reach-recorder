@@ -2,7 +2,7 @@ source "https://rubygems.org"
 source 'https://BnrJb6FZyzspBboNJzYZ@gem.fury.io/govuk/'
 
 gem "rake"
-gem "datainsight_recorder", "0.1.1"
+gem "datainsight_recorder", "0.3.1"
 gem "datainsight_logging", "0.0.3"
 gem "airbrake", "3.1.5"
 

@@ -1,0 +1,6 @@
+development:
+  uri: "mysql://root:@localhost/datainsight_weekly_reach"
+production:
+  uri: "mysql://datainsight:@localhost/datainsight_weekly_reach"
+test:
+  uri: "mysql://datainsight:@localhost/datainsight_weekly_reach_test"
