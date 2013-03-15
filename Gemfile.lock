@@ -25,11 +25,11 @@ GEM
       dm-transactions (~> 1.2.0)
       dm-types (~> 1.2.0)
       dm-validations (~> 1.2.0)
-    data_objects (0.10.11)
+    data_objects (0.10.12)
       addressable (~> 2.1)
     datainsight_logging (0.0.3)
       logging
-    datainsight_recorder (0.1.1)
+    datainsight_recorder (0.3.1)
       bunny
       data_mapper (= 1.2.0)
       datainsight_logging
@@ -69,8 +69,8 @@ GEM
       uuidtools (~> 2.1)
     dm-validations (1.2.0)
       dm-core (~> 1.2.0)
-    do_mysql (0.10.11)
-      data_objects (= 0.10.11)
+    do_mysql (0.10.12)
+      data_objects (= 0.10.12)
     factory_girl (4.0.0)
       activesupport (>= 3.0.0)
     fastercsv (1.5.5)
@@ -126,7 +126,7 @@ DEPENDENCIES
   bunny
   ci_reporter
   datainsight_logging (= 0.0.3)
-  datainsight_recorder (= 0.1.1)
+  datainsight_recorder (= 0.3.1)
   factory_girl
   gli (= 1.6.0)
   rack-test
