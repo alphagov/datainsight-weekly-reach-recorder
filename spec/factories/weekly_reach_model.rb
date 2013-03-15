@@ -1,6 +1,3 @@
-require_relative "../../lib/datamapper_config"
-require_relative "../../lib/model"
-
 FactoryGirl.define do
   factory :model, class: WeeklyReach::Model do
     start_at DateTime.parse("2012-08-06T00:00:00")

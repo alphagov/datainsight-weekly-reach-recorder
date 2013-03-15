@@ -2,8 +2,9 @@ require 'json'
 require 'bundler/setup'
 Bundler.require(:default, :exposer)
 
+require "datainsight_recorder/datamapper_config"
+
 require_relative 'model'
-require_relative 'datamapper_config'
 require_relative "initializers"
 
 helpers Datainsight::Logging::Helpers
@@ -15,7 +16,7 @@ configure do
   enable :logging
   unless test?
     Datainsight::Logging.configure(:type => :exposer)
-    DataMapperConfig.configure
+    DataInsight::Recorder::DataMapperConfig.configure
   end
 end
 
