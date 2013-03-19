@@ -36,6 +36,7 @@ describe "weekly-visitors" do
     response.should have_key(:id)
     response.should have_key(:web_url)
     response.should have_key(:updated_at)
+    response[:updated_at].should =~ /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/
     response[:response_info][:status].should == "ok"
 
     data = response[:details][:data]

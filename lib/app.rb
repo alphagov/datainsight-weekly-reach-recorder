@@ -20,6 +20,8 @@ configure do
   end
 end
 
+TIMESTAMP_FORMAT="%Y-%m-%dT%H:%M:%S"
+
 def create_json_response(metric, id)
 {
     :response_info => {:status => "ok"},
@@ -29,7 +31,7 @@ def create_json_response(metric, id)
       :source => ["Google Analytics", "Celebrus", "Omniture"],
       :data => WeeklyReach::Model.last_six_months_data(metric)
     },
-    :updated_at => WeeklyReach::Model.updated_at(metric)
+    :updated_at => WeeklyReach::Model.updated_at(metric).strftime(TIMESTAMP_FORMAT)
   }.to_json
 end
 
