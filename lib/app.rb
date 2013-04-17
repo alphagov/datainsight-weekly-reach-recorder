@@ -29,7 +29,7 @@ def create_json_response(metric, id)
     :web_url => "",
     :details => {
       :source => ["Google Analytics", "Celebrus", "Omniture"],
-      :data => WeeklyReach::Model.last_six_months_data(metric)
+      :data => WeeklyReach::Model.last_18_months_data(metric)
     },
     :updated_at => WeeklyReach::Model.updated_at(metric).strftime(TIMESTAMP_FORMAT)
   }.to_json

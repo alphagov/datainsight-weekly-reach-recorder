@@ -38,19 +38,23 @@ module WeeklyReach
       record.save
     end
 
-    def self.last_six_months_data(metric)
-      past_six_months = (Date.today - 7) << 6
-      Model.all(
+    def self.last_18_months_data(metric)
+      past_18_months_data = Model.all(
         :metric => metric,
-        :start_at.gte => past_six_months,
-        :order => [ :start_at.asc ]
-      ).group_by {|each| [each[:start_at], each[:end_at]] }.map {|(start_at, end_at), values|
+        :start_at.gte => ((Date.today - 7) << 18),
+        :order => [:start_at.asc]
+      )
+      group_by_start_and_end(past_18_months_data).map {|(start_at, end_at), values|
         {
           :start_at => start_at.to_date,
           :end_at => (end_at-1).to_date,
           :value => Hash[values.group_by(&:site).map {|site, value| [site.to_sym, value[0][:value]]}]
         }
       }
+    end
+
+    def self.group_by_start_and_end(iterable)
+      iterable.group_by {|each| [each[:start_at], each[:end_at]] }
     end
 
     def self.updated_at(metric)

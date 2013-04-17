@@ -60,9 +60,9 @@ describe "WeeklyVisits" do
     end
   end
 
-  describe "last_six_months_data" do
+  describe "last_18_months_data" do
 
-    it "should return data for the past six months" do
+    it "should return data for the past 18 months" do
       WeeklyReach::Model.create(
           :value => 100,
           :metric => "visits",
@@ -76,8 +76,8 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 400,
           :metric => "visits",
-          :start_at => DateTime.new(2012, 1, 22), # Sunday 12 months ago
-          :end_at => DateTime.new(2012, 1, 29), # (Sunday 12 months ago) + 7 days
+          :start_at => DateTime.new(2011, 1, 23), # Sunday 24 months ago
+          :end_at => DateTime.new(2011, 1, 30), # (Sunday 24 months ago) + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
@@ -86,18 +86,18 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 200,
           :metric => "visits",
-          :start_at => DateTime.new(2012, 7, 1), # Sunday 6 months ago
-          :end_at => DateTime.new(2012, 7, 8), # Sunday 6 months ago + 7 days
+          :start_at => DateTime.new(2011, 7, 3), # Sunday 18 months ago
+          :end_at => DateTime.new(2011, 7, 10), # Sunday 18 months ago + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
       )
 
       Timecop.travel(DateTime.new(2013, 1, 5)) do
-        data = WeeklyReach::Model.last_six_months_data(:visits)
+        data = WeeklyReach::Model.last_18_months_data(:visits)
         data.length.should == 2
-        data.first[:start_at].should == Date.new(2012, 7, 1)
-        data.first[:end_at].should == Date.new(2012, 7, 7)
+        data.first[:start_at].should == Date.new(2011, 7, 3)
+        data.first[:end_at].should == Date.new(2011, 7, 9)
         data.first[:value][:govuk].should == 200
         data.last[:start_at].should == Date.new(2012, 12, 23)
         data.last[:end_at].should == Date.new(2012, 12, 29)
@@ -105,7 +105,7 @@ describe "WeeklyVisits" do
       end
     end
 
-    it "should return data for the past six months for mixed sites" do
+    it "should return data for the past 18 months for mixed sites" do
       WeeklyReach::Model.create(
           :value => 100,
           :metric => "visits",
@@ -119,8 +119,8 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 400,
           :metric => "visits",
-          :start_at => DateTime.new(2012, 1, 22), # Sunday 12 months ago
-          :end_at => DateTime.new(2012, 1, 29), # (Sunday 12 months ago) + 7 days
+          :start_at => DateTime.new(2011, 1, 23), # Sunday 24 months ago
+          :end_at => DateTime.new(2011, 1, 30), # (Sunday 24 months ago) + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
@@ -129,15 +129,15 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 200,
           :metric => "visits",
-          :start_at => DateTime.new(2012, 7, 1), # Sunday 6 months ago
-          :end_at => DateTime.new(2012, 7, 8), # Sunday 6 months ago + 7 days
+          :start_at => DateTime.new(2011, 7, 3), # Sunday 18 months ago
+          :end_at => DateTime.new(2011, 7, 10), # Sunday 18 months ago + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
       )
 
       Timecop.travel(DateTime.new(2013, 1, 5)) do      
-        data = WeeklyReach::Model.last_six_months_data(:visits)
+        data = WeeklyReach::Model.last_18_months_data(:visits)
         data.length.should == 2
         data.first[:value][:govuk].should == 200
         data.last[:value][:businesslink].should == 100
