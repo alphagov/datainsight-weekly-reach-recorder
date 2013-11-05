@@ -17,8 +17,8 @@ describe "WeeklyVisits" do
               :_routing_key => "google_analytics.visits.weekly"
           },
           :payload => {
-              :start_at => "2011-03-28T00:00:00",
-              :end_at => "2011-04-04T00:00:00",
+              :start_at => "2011-03-28T00:00:00+01:00",
+              :end_at => "2011-04-04T00:00:00+01:00",
               :value => {
                 :visits => 700,
                 :site => "directgov"
@@ -36,8 +36,8 @@ describe "WeeklyVisits" do
 
       records.first.collected_at.should == DateTime.new(2012, 12, 12)
       records.first.source.should == "Google Analytics"
-      records.first.start_at.should == DateTime.new(2011, 3, 28)
-      records.first.end_at.should == DateTime.new(2011, 4, 4)
+      records.first.start_at.should == DateTime.parse("2011-03-28T00:00+01:00")
+      records.first.end_at.should == DateTime.parse("2011-04-04T00:00:00+01:00")
       records.first.site.should == "directgov"
       records.first.value.should == 700
     end
@@ -53,8 +53,8 @@ describe "WeeklyVisits" do
 
       records.first.collected_at.should == DateTime.new(2012, 12, 12)
       records.first.source.should == "Google Analytics"
-      records.first.start_at.should == DateTime.new(2011, 3, 28)
-      records.first.end_at.should == DateTime.new(2011, 4, 4)
+      records.first.start_at.should == DateTime.parse("2011-03-28T00:00+01:00")
+      records.first.end_at.should == DateTime.parse("2011-04-04T00:00:00+01:00")
       records.first.site.should == "directgov"
       records.first.value.should == 800
     end

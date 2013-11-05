@@ -11,8 +11,8 @@ describe "WeeklyVisitsRecorder" do
             :_routing_key => "google_analytics.visits.weekly"
         },
         :payload => {
-            :start_at => "2011-03-28T00:00:00",
-            :end_at => "2011-04-04T00:00:00",
+            :start_at => "2011-03-28T00:00:00+01:00",
+            :end_at => "2011-04-04T00:00:00+01:00",
             :value => {
               :visits => 700,
               :site => "directgov"
@@ -33,8 +33,8 @@ describe "WeeklyVisitsRecorder" do
     item = WeeklyReach::Model.first
     item.metric.should == "visits"
     item.value.should == 700
-    item.start_at.should == DateTime.new(2011, 3, 28)
-    item.end_at.should == DateTime.new(2011, 4, 4)
+    item.start_at.should == DateTime.parse("2011-03-28T00:00:00+01:00")
+    item.end_at.should == DateTime.parse("2011-04-04T00:00:00+01:00")
     item.site.should == "directgov"
   end
 
@@ -46,8 +46,8 @@ describe "WeeklyVisitsRecorder" do
     item = WeeklyReach::Model.first
     item.metric.should == "visits"
     item.value.should == 700
-    item.start_at.should == DateTime.new(2011, 3, 28)
-    item.end_at.should == DateTime.new(2011, 4, 4)
+    item.start_at.should == DateTime.parse("2011-03-28T00:00:00+01:00")
+    item.end_at.should == DateTime.parse("2011-04-04T00:00:00+01:00")
     item.site.should == "govuk"
   end
 
