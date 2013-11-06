@@ -17,8 +17,8 @@ describe "WeeklyVisits" do
               :_routing_key => "google_analytics.visits.weekly"
           },
           :payload => {
-              :start_at => "2011-03-28T00:00:00",
-              :end_at => "2011-04-04T00:00:00",
+              :start_at => "2011-03-28T00:00:00+01:00",
+              :end_at => "2011-04-04T00:00:00+01:00",
               :value => {
                 :visits => 700,
                 :site => "directgov"
@@ -34,10 +34,10 @@ describe "WeeklyVisits" do
 
       records.should have(1).item
 
-      records.first.collected_at.should == DateTime.new(2012, 12, 12)
+      records.first.collected_at.should == DateTime.parse("2012-12-12T00:00:00+00:00")
       records.first.source.should == "Google Analytics"
-      records.first.start_at.should == DateTime.new(2011, 3, 28)
-      records.first.end_at.should == DateTime.new(2011, 4, 4)
+      records.first.start_at.should == DateTime.parse("2011-03-28T00:00+01:00")
+      records.first.end_at.should == DateTime.parse("2011-04-04T00:00:00+01:00")
       records.first.site.should == "directgov"
       records.first.value.should == 700
     end
@@ -51,10 +51,10 @@ describe "WeeklyVisits" do
 
       records.should have(1).item
 
-      records.first.collected_at.should == DateTime.new(2012, 12, 12)
+      records.first.collected_at.should == DateTime.parse("2012-12-12T00:00:00+00:00")
       records.first.source.should == "Google Analytics"
-      records.first.start_at.should == DateTime.new(2011, 3, 28)
-      records.first.end_at.should == DateTime.new(2011, 4, 4)
+      records.first.start_at.should == DateTime.parse("2011-03-28T00:00+01:00")
+      records.first.end_at.should == DateTime.parse("2011-04-04T00:00:00+01:00")
       records.first.site.should == "directgov"
       records.first.value.should == 800
     end
@@ -66,8 +66,8 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 100,
           :metric => "visits",
-          :start_at => DateTime.new(2012, 12, 23), # Sunday
-          :end_at => DateTime.new(2012, 12, 30), # Sunday + 7 days
+          :start_at => DateTime.parse("2012-12-23T00:00:00+00:00"), # Sunday
+          :end_at => DateTime.parse("2012-12-30T00:00:00+00:00"), # Sunday + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
@@ -76,8 +76,8 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 400,
           :metric => "visits",
-          :start_at => DateTime.new(2011, 1, 23), # Sunday 24 months ago
-          :end_at => DateTime.new(2011, 1, 30), # (Sunday 24 months ago) + 7 days
+          :start_at => DateTime.parse("2011-01-23T00:00:00+00:00"), # Sunday 24 months ago
+          :end_at => DateTime.parse("2011-01-30T00:00:00+00:00"), # (Sunday 24 months ago) + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
@@ -86,14 +86,14 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 200,
           :metric => "visits",
-          :start_at => DateTime.new(2011, 7, 3), # Sunday 18 months ago
-          :end_at => DateTime.new(2011, 7, 10), # Sunday 18 months ago + 7 days
+          :start_at => DateTime.parse("2011-07-03T00:00:00+01:00"), # Sunday 18 months ago
+          :end_at => DateTime.parse("2011-07-10T00:00:00+01:00"), # Sunday 18 months ago + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
       )
 
-      Timecop.travel(DateTime.new(2013, 1, 5)) do
+      Timecop.travel(DateTime.parse("2013-01-05T00:00:00+00:00")) do
         data = WeeklyReach::Model.last_18_months_data(:visits)
         data.length.should == 2
         data.first[:start_at].should == Date.new(2011, 7, 3)
@@ -109,8 +109,8 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 100,
           :metric => "visits",
-          :start_at => DateTime.new(2012, 12, 24), # Monday
-          :end_at => DateTime.new(2012, 12, 31), # Monday + 7 days
+          :start_at => DateTime.parse("2012-12-24T00:00:00+00:00"), # Monday
+          :end_at => DateTime.parse("2012-12-31T00:00:00+00:00"), # Monday + 7 days
           :collected_at => DateTime.now,
           :site => "businesslink",
           :source => "Google Analytics"
@@ -119,8 +119,8 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 400,
           :metric => "visits",
-          :start_at => DateTime.new(2011, 1, 23), # Sunday 24 months ago
-          :end_at => DateTime.new(2011, 1, 30), # (Sunday 24 months ago) + 7 days
+          :start_at => DateTime.parse("2011-01-23T00:00:00+00:00"), # Sunday 24 months ago
+          :end_at => DateTime.parse("2011-01-30T00:00:00+00:00"), # (Sunday 24 months ago) + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
@@ -129,14 +129,14 @@ describe "WeeklyVisits" do
       WeeklyReach::Model.create(
           :value => 200,
           :metric => "visits",
-          :start_at => DateTime.new(2011, 7, 3), # Sunday 18 months ago
-          :end_at => DateTime.new(2011, 7, 10), # Sunday 18 months ago + 7 days
+          :start_at => DateTime.parse("2011-07-3T00:00:00+01:00"), # Sunday 18 months ago
+          :end_at => DateTime.parse("2011-07-10T00:00:00+01:00"), # Sunday 18 months ago + 7 days
           :collected_at => DateTime.now,
           :site => "govuk",
           :source => "Google Analytics"
       )
 
-      Timecop.travel(DateTime.new(2013, 1, 5)) do      
+      Timecop.travel(DateTime.parse("2013-01-05T00:00:00+00:00")) do
         data = WeeklyReach::Model.last_18_months_data(:visits)
         data.length.should == 2
         data.first[:value][:govuk].should == 200
@@ -148,8 +148,8 @@ describe "WeeklyVisits" do
   describe "validates start and end at" do
     it "should be valid data if data is ok" do
       model = FactoryGirl.create(:model, {
-          :start_at => DateTime.parse("2012-08-12T00:00:00"),
-          :end_at => DateTime.parse("2012-08-19T00:00:00"),
+          :start_at => DateTime.parse("2012-08-12T00:00:00+01:00"),
+          :end_at => DateTime.parse("2012-08-19T00:00:00+01:00"),
       })
 
       model.should be_valid
@@ -157,8 +157,8 @@ describe "WeeklyVisits" do
 
     it "should not be valid if there are 6 days between start at and end at" do
       model = FactoryGirl.create(:model, {
-          :start_at => DateTime.parse("2012-08-12T00:00:00"),
-          :end_at => DateTime.parse("2012-08-18T00:00:00"),
+          :start_at => DateTime.parse("2012-08-12T00:00:00+01:00"),
+          :end_at => DateTime.parse("2012-08-18T00:00:00+01:00"),
       })
 
       model.should_not be_valid
@@ -166,8 +166,8 @@ describe "WeeklyVisits" do
 
     it "should not be valid if there are 8 days between start at and end at" do
       model = FactoryGirl.create(:model, {
-          :start_at => DateTime.parse("2012-08-12T00:00:00"),
-          :end_at => DateTime.parse("2012-08-20T00:00:00"),
+          :start_at => DateTime.parse("2012-08-12T00:00:00+01:00"),
+          :end_at => DateTime.parse("2012-08-20T00:00:00+01:00"),
       })
 
       model.should_not be_valid

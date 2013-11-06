@@ -36,6 +36,16 @@ module WeeklyReach
       record.source = message[:envelope][:collector]
       record.value = message[:payload][:value][metric]
       record.save
+      begin
+        record.save
+      rescue DataMapper::SaveFailureError => e
+        begin
+          logger.error("SaveFailure: #{e.resource.errors.inspect}")
+        rescue NoMethodError
+          logger.error("SaveFailure (no detail): #{e}")
+        end
+        raise
+      end
     end
 
     def self.last_18_months_data(metric)
